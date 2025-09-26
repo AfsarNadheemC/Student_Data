@@ -100,6 +100,7 @@ namespace Student_Data
 
             });
 
+            this.DataContext = ViewModel;
         }
     }
 
