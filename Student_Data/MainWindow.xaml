@@ -5,15 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Student_Data"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" d:DataContext="{d:DesignInstance Type=local:ViewModel }">
-    <Grid>
-        
-        
-        
-        <ItemsControl ItemsSource="{Binding Students}">
+        Title="MainWindow" Height="600" Width="400" d:DataContext="{d:DesignInstance Type=local:ViewModel }" Topmost="True">
+    <Grid Margin="5,0">
+
+        <Grid.RowDefinitions>
+            
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{Binding SchoolName}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0"/>
+        <TextBlock Text="{Binding Class}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0"/>
+        <TextBlock Text="{Binding TeacherName}"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>
+
+        <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="80" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="0,0"/>
+        <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="40" Height="5" Fill="DarkGoldenrod" RadiusX="2.5" RadiusY="2.5" Margin="0,0"/>
+
+
+
+        <ItemsControl ItemsSource="{Binding Students}" Grid.Row="2">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}" FontSize="16" Margin="5"/>
+
+                    <Border Background="WhiteSmoke" Margin="5" CornerRadius="10" Height="40" >
+
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
+                        </Border.Effect>
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Name}" FontSize="16" Margin="5" Grid.Column="1" VerticalAlignment="Top"/>
+                            <Rectangle  />
+
+                        </Grid>
+                        
+                        
+                    </Border>
+                    
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>

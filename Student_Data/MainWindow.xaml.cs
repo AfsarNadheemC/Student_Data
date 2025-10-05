@@ -36,7 +36,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 10, 15), 85, 90, 95, 80, 88, 100,  500),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
-                    }                    ),
+                    }        ,"B+ve"            ),
 
                 new Student(
                     "Albert Einstein",
@@ -48,7 +48,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 10, 15), 85, 90, 95, 80, 88, 100,  500),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
-                    }                    ),
+                    }      ,   "B+ve"           ),
 
                 new Student(
                     "Abdul Kalam",
@@ -60,7 +60,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 10, 15), 85, 90, 95, 80, 88, 100,  500),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
-                    }                    ),
+                    }          ,"B+ve"          ),
 
                 new Student(
                     "Thomas Alva Edison",
@@ -72,7 +72,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 10, 15), 85, 90, 95, 80, 88, 100,  500),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
-                    }                    ),
+                    }      ,"B+ve"              ),
 
                 new Student(
                     "Nikola Tesla",
@@ -84,7 +84,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 10, 15), 85, 90, 95, 80, 88, 100,  500),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
-                    }                    ),
+                    }      ,"B+ve"              ),
 
                 new Student(
                     "Stephen Hawking",
@@ -96,7 +96,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 10, 15), 85, 90, 95, 80, 88, 100,  500),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 88, 92, 94, 86, 90, 100,  500),
-                    }                    ),
+                    }         ,"B+ve"           ),
 
             });
 
@@ -106,6 +106,10 @@ namespace Student_Data
 
     public class ViewModel
     {
+        public string SchoolName { get; set; } = "Springfield High School";
+        public string TeacherName { get; set; } = "Galileo Galilei";
+        public string Class { get; set; } = "5B";
+        public int Percentage { get; set; } 
         public ObservableCollection<Student> Students { get; set; }
 
         public ViewModel(ObservableCollection<Student> students)
@@ -121,14 +125,15 @@ namespace Student_Data
         public string Address { get; set; }
         public DateTime DateOfBirth { get; set; }
         public ObservableCollection<Exam> Exams { get; set; }
-
-        public Student(string name, string rollNumber, string address, DateTime dateOfBirth, ObservableCollection<Exam> exams)
+        public string BloodGroup { get; set; }
+        public Student(string name, string rollNumber, string address, DateTime dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup)
         {
             Name = name;
             RollNumber = rollNumber;
             Address = address;
             DateOfBirth = dateOfBirth;
             Exams = exams;
+            BloodGroup = bloodGroup;
         }
     }
 
