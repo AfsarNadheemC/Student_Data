@@ -29,7 +29,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
 
-                    <Border Background="WhiteSmoke" Margin="5" CornerRadius="10" Height="40" >
+                    <Border Background="WhiteSmoke" Margin="5" CornerRadius="15" Height="40" >
 
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
@@ -40,9 +40,24 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="40" />
                                 <ColumnDefinition />
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Name}" FontSize="16" Margin="5" Grid.Column="1" VerticalAlignment="Top"/>
+
+                            <Ellipse Grid.Column="0" Fill="{Binding LabelColorDim}" Margin="2" />
+                            <TextBlock Text="{Binding Initial}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Foreground="{Binding LabelColorDark}"/>
+
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" Margin="5,0" Grid.Row="0" Padding="0" VerticalAlignment="Center"/>
+
+                                <Rectangle Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0" />
+                                <Rectangle Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" />
+
+                            </Grid>
+                            
                             <Rectangle  />
 
                         </Grid>
