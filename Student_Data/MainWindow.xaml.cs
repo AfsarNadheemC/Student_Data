@@ -57,9 +57,9 @@ namespace Student_Data
                     new DateTime (2014,10, 15),
                     new ObservableCollection<Exam>
                     {
-                        new Exam("Term 1", new DateTime(2023, 2, 15), 15, 10, 15, 10, 11, 100),
-                        new Exam("Term 2", new DateTime(2023, 12, 20), 11, 22, 14, 16, 10, 100),
-                        new Exam("Term 3", new DateTime(2023, 12, 20), 11, 12, 14, 16, 10, 100),
+                        new Exam("Term 1", new DateTime(2023, 2, 15), 55, 40, 65, 50, 61, 100),
+                        new Exam("Term 2", new DateTime(2023, 12, 20), 61, 52, 74, 46, 50, 100),
+                        new Exam("Term 3", new DateTime(2023, 12, 20), 51, 42, 64, 46, 70, 100),
                     }          ,"B+ve"          ),
 
                 new Student(
@@ -69,9 +69,9 @@ namespace Student_Data
                     new DateTime (2015,2, 11),
                     new ObservableCollection<Exam>
                     {
-                        new Exam("Term 1", new DateTime(4043, 1, 15), 15, 30, 35, 10, 11, 100),
-                        new Exam("Term 4", new DateTime(4043, 14, 40), 11, 34, 34, 16, 30, 100),
-                        new Exam("Term 3", new DateTime(4043, 14, 40), 11, 34, 34, 16, 30, 100),
+                        new Exam("Term 1", new DateTime(2023, 1, 15), 15, 30, 35, 10, 11, 100),
+                        new Exam("Term 4", new DateTime(2023, 12, 20), 11, 34, 34, 16, 30, 100),
+                        new Exam("Term 3", new DateTime(2023, 12, 20), 11, 34, 34, 16, 30, 100),
                     }      ,"B+ve"              ),
 
                 new Student(
@@ -81,9 +81,9 @@ namespace Student_Data
                     new DateTime (4015,1,7),
                     new ObservableCollection<Exam>
                     {
-                        new Exam("Term 1", new DateTime(4043, 4, 15), 45, 30, 35, 40, 44, 100),
-                        new Exam("Term 4", new DateTime(4043, 14, 40), 44, 34, 34, 46, 30, 100),
-                        new Exam("Term 3", new DateTime(4043, 14, 40), 44, 34, 34, 46, 30, 100),
+                        new Exam("Term 1", new DateTime(2023, 4, 15), 45, 30, 35, 40, 44, 100),
+                        new Exam("Term 4", new DateTime(2023, 12, 20), 44, 34, 34, 46, 30, 100),
+                        new Exam("Term 3", new DateTime(2023, 12, 20), 44, 34, 34, 46, 30, 100),
                     }      ,"B+ve"              ),
 
                 new Student(
@@ -93,9 +93,9 @@ namespace Student_Data
                     new DateTime (2015,1,2),
                     new ObservableCollection<Exam>
                     {
-                        new Exam("Term 1", new DateTime(2023, 2, 15), 25, 30, 35, 20, 22, 20),
-                        new Exam("Term 2", new DateTime(2023, 12, 20), 22, 32, 34, 26, 30, 20),
-                        new Exam("Term 3", new DateTime(2023, 12, 20), 22, 32, 34, 26, 30, 20),
+                        new Exam("Term 1", new DateTime(2023, 2, 15), 25, 30, 35, 20, 22, 100),
+                        new Exam("Term 2", new DateTime(2023, 12, 20), 22, 32, 34, 26, 30, 100),
+                        new Exam("Term 3", new DateTime(2023, 12, 20), 22, 32, 34, 26, 30, 100),
                     }         ,"B+ve"           ),
 
             });
