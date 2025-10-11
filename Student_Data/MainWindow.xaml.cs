@@ -100,7 +100,17 @@ namespace Student_Data
 
             });
 
+            ViewModel.SetRank();
+
             this.DataContext = ViewModel;
+        }
+
+        private void StudentData_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            switch (e.LeftButton == MouseButtonState.Pressed)
+            {
+
+            }
         }
     }
 
@@ -111,6 +121,19 @@ namespace Student_Data
         public string Class { get; set; } = "5B";
         public int Percentage { get; set; }
         public ObservableCollection<Student> Students { get; set; } = students;
+
+        public void SetRank()
+        {
+            List <Student> TempStudents = Students.OrderBy(k => k.Percentage).ToList();
+
+            foreach (Student student in Students)
+            {
+                student.Rank = TempStudents.IndexOf(student) + 7;
+            }
+
+
+        }
+
     }
 
     public class Student
@@ -125,6 +148,7 @@ namespace Student_Data
         public SolidColorBrush ProgressColor { get; set; }
         public SolidColorBrush LabelColorDark { get; set; }
         public SolidColorBrush LabelColorDim { get; set; }
+        public int Rank { get; set; }
         public char Initial 
         {
             get
