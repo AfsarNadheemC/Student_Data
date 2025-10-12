@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -107,14 +108,20 @@ namespace Student_Data
 
         private void StudentData_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            switch (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-
+                SingleStudentDetailBorder.Visibility = Visibility.Visible;
+                ViewModel.SelectedStudent = (sender as Border).DataContext as Student;
             }
+        }
+
+        private void Close_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SingleStudentDetailBorder.Visibility = Visibility.Collapsed;
         }
     }
 
-    public class ViewModel(ObservableCollection<Student> students)
+    public class ViewModel(ObservableCollection<Student> students) : INotifyPropertyChanged
     {
         public string SchoolName { get; set; } = "Springfield High School";
         public string TeacherName { get; set; } = "Galileo Galilei";
@@ -122,9 +129,18 @@ namespace Student_Data
         public int Percentage { get; set; }
         public ObservableCollection<Student> Students { get; set; } = students;
 
+        private Student _SelectedStudent;
+
+        public Student SelectedStudent
+        {
+            get { return _SelectedStudent; }
+            set { _SelectedStudent = value; OnPropertyChanged(nameof(SelectedStudent)); }
+        }
+
+
         public void SetRank()
         {
-            List <Student> TempStudents = Students.OrderBy(k => k.Percentage).ToList();
+            List<Student> TempStudents = Students.OrderBy(k => k.Percentage).ToList();
 
             foreach (Student student in Students)
             {
@@ -132,6 +148,13 @@ namespace Student_Data
             }
 
 
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }
@@ -149,7 +172,7 @@ namespace Student_Data
         public SolidColorBrush LabelColorDark { get; set; }
         public SolidColorBrush LabelColorDim { get; set; }
         public int Rank { get; set; }
-        public char Initial 
+        public char Initial
         {
             get
             {
@@ -178,16 +201,16 @@ namespace Student_Data
             {
 
                 case > 75:
-                    ProgressColor = new SolidColorBrush ( Colors.Green );
+                    ProgressColor = new SolidColorBrush(Colors.Green);
                     break;
 
                 case > 40:
-                    ProgressColor = new SolidColorBrush ( Colors.Orange );
+                    ProgressColor = new SolidColorBrush(Colors.Orange);
 
                     break;
 
                 default:
-                    ProgressColor = new SolidColorBrush ( Colors.Red );
+                    ProgressColor = new SolidColorBrush(Colors.Red);
 
                     break;
 
@@ -226,13 +249,13 @@ namespace Student_Data
             TotalMarks = subjectMaxMark * 5;
         }
 
-        public float GetPercentage(  )
+        public float GetPercentage()
         {
             return (TotalScored * 100 / TotalMarks);
         }
 
 
-        
+
 
     }
 
@@ -263,13 +286,13 @@ namespace Student_Data
 
         };
 
-        public static ( SolidColorBrush , SolidColorBrush ) GetRandomColor()
+        public static (SolidColorBrush, SolidColorBrush) GetRandomColor()
         {
-            Random RD = new Random ();
+            Random RD = new Random();
 
-            int Index = RD.Next (6);
+            int Index = RD.Next(6);
 
-            return ( ForeBrushes[Index] , BackBrushes[Index] ) ;
+            return (ForeBrushes[Index], BackBrushes[Index]);
 
         }
     }
