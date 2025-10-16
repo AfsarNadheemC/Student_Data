@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -19,7 +20,7 @@ namespace Student_Data
     public partial class MainWindow : Window
     {
         public ViewModel ViewModel;
-
+        Storyboard SingleStudentAni;
         public MainWindow()
         {
             InitializeComponent();
@@ -37,7 +38,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 10, 15), 65, 90, 95, 60, 66, 100),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 66, 92, 94, 66, 90, 100),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 66, 92, 94, 66, 90, 100),
-                    }        ,"B+ve"            ),
+                    }        ,"B+ve"       , "Qwerty"     ),
 
                 new Student(
                     "Albert Einstein",
@@ -46,10 +47,10 @@ namespace Student_Data
                     new DateTime (2015,3, 14),
                     new ObservableCollection<Exam>
                     {
-                        new Exam("Term 1", new DateTime(2023, 10, 15), 35, 40, 45, 30, 33, 100),
+                        new Exam("Term 1", new DateTime(2023, 10, 15), 95, 90, 95, 90, 93, 100),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 33, 42, 44, 36, 40, 100),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 33, 42, 44, 36, 40, 100),
-                    }      ,   "B+ve"           ),
+                    }      ,   "B+ve"     , "Qwerty"         ),
 
                 new Student(
                     "Abdul Kalam",
@@ -61,7 +62,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 2, 15), 55, 40, 65, 50, 61, 100),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 61, 52, 74, 46, 50, 100),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 51, 42, 64, 46, 70, 100),
-                    }          ,"B+ve"          ),
+                    }          ,"B+ve"     , "Qwerty"        ),
 
                 new Student(
                     "Thomas Alva Edison",
@@ -73,7 +74,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 1, 15), 15, 30, 35, 10, 11, 100),
                         new Exam("Term 4", new DateTime(2023, 12, 20), 11, 34, 34, 16, 30, 100),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 11, 34, 34, 16, 30, 100),
-                    }      ,"B+ve"              ),
+                    }      ,"B+ve"      , "Qwerty"           ),
 
                 new Student(
                     "Nikola Tesla",
@@ -85,7 +86,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 4, 15), 45, 30, 35, 40, 44, 100),
                         new Exam("Term 4", new DateTime(2023, 12, 20), 44, 34, 34, 46, 30, 100),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 44, 34, 34, 46, 30, 100),
-                    }      ,"B+ve"              ),
+                    }      ,"B+ve"      , "Qwerty"           ),
 
                 new Student(
                     "Stephen Hawking",
@@ -97,7 +98,7 @@ namespace Student_Data
                         new Exam("Term 1", new DateTime(2023, 2, 15), 25, 30, 35, 20, 22, 100),
                         new Exam("Term 2", new DateTime(2023, 12, 20), 22, 32, 34, 26, 30, 100),
                         new Exam("Term 3", new DateTime(2023, 12, 20), 22, 32, 34, 26, 30, 100),
-                    }         ,"B+ve"           ),
+                    }         ,"B+ve"    , "Qwerty"          ),
 
             });
 
@@ -110,14 +111,33 @@ namespace Student_Data
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                SingleStudentDetailBorder.Visibility = Visibility.Visible;
-                ViewModel.SelectedStudent = (sender as Border).DataContext as Student;
+                if (sender is Border SelectedBorder)
+                {
+                    Point Point = SelectedBorder.TranslatePoint(new Point(0, 0), StudentsItemsControl);
+
+                    ViewModel.FromMargin = new Thickness(40, Point.Y, 40, StudentsItemsControl.ActualHeight - (40 + Point.Y));
+
+                    SingleStudentDetailBorder.Visibility = Visibility.Visible;
+                    SingleStudentAni = this.Resources["SingleStudentAni"] as Storyboard;
+                    SingleStudentAni.Begin();
+
+                    ViewModel.SelectedStudent = (sender as Border).DataContext as Student;
+
+                }
+
+
             }
         }
 
         private void Close_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SingleStudentDetailBorder.Visibility = Visibility.Collapsed;
+        }
+
+        private void SingleStudentAni_Completed(object sender, EventArgs e)
+        {
+            SingleStudentAni.Stop();
+            SingleStudentDetailBorder.Margin = new Thickness(5);
         }
     }
 
@@ -137,6 +157,13 @@ namespace Student_Data
             set { _SelectedStudent = value; OnPropertyChanged(nameof(SelectedStudent)); }
         }
 
+        private Thickness _FromMargin;
+
+        public Thickness FromMargin
+        {
+            get { return _FromMargin; }
+            set { _FromMargin = value; OnPropertyChanged(nameof(FromMargin)); }
+        }
 
         public void SetRank()
         {
@@ -144,7 +171,7 @@ namespace Student_Data
 
             foreach (Student student in Students)
             {
-                student.Rank = TempStudents.IndexOf(student) + 7;
+                student.Rank = TempStudents.IndexOf(student);
             }
 
 
@@ -171,6 +198,7 @@ namespace Student_Data
         public SolidColorBrush ProgressColor { get; set; }
         public SolidColorBrush LabelColorDark { get; set; }
         public SolidColorBrush LabelColorDim { get; set; }
+        public string FatherName { get; set; }
         public int Rank { get; set; }
         public char Initial
         {
@@ -179,7 +207,7 @@ namespace Student_Data
                 return Name[0];
             }
         }
-        public Student(string name, string rollNumber, string address, DateTime dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup)
+        public Student(string name, string rollNumber, string address, DateTime dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup, string fatherName)
         {
             Name = name;
             RollNumber = rollNumber;
@@ -218,6 +246,7 @@ namespace Student_Data
 
 
             (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
+            FatherName = fatherName;
         }
     }
 
@@ -254,6 +283,13 @@ namespace Student_Data
             return (TotalScored * 100 / TotalMarks);
         }
 
+        public int Percentage
+        {
+            get
+            {
+                return (TotalScored * 100 / TotalMarks);
+            }
+        }
 
 
 
