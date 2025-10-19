@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -163,6 +164,14 @@ namespace Student_Data
         {
             get { return _FromMargin; }
             set { _FromMargin = value; OnPropertyChanged(nameof(FromMargin)); }
+        }
+
+        private bool myVar;
+
+        public bool MyProperty
+        {
+            get { return myVar; }
+            set { myVar = value; }
         }
 
         public void SetRank()
@@ -330,6 +339,46 @@ namespace Student_Data
 
             return (ForeBrushes[Index], BackBrushes[Index]);
 
+        }
+    }
+
+    public enum Page
+    {
+        Personal_Details,
+        Exams
+    }
+
+    public class EnumToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || parameter == null)
+                return Visibility.Collapsed;
+
+            string checkValue = value.ToString();
+            string targetValue = parameter.ToString();
+
+            return checkValue.Equals(targetValue, StringComparison.InvariantCultureIgnoreCase)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class EnumBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null && value.ToString().Equals(parameter?.ToString(), StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? Enum.Parse(targetType, parameter.ToString()) : Binding.DoNothing;
         }
     }
 }
