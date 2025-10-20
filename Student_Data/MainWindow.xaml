@@ -85,14 +85,30 @@
 
                             <Trigger Property="IsPressed" Value="true">
 
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter TargetName="BotRec" Property="Fill" Value="DarkBlue"/>
+                                <Setter Property="Foreground" >
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{Binding DataContext.SelectedStudent.LabelColorDark, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="BotRec" Property="Fill" >
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{Binding DataContext.SelectedStudent.LabelColorDark, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </Setter.Value>
+                                </Setter>
 
                             </Trigger>
 
                             <Trigger Property="IsChecked" Value="true">
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter TargetName="BotRec" Property="Fill" Value="Navy"/>
+                                <Setter Property="Foreground" >
+                                    <Setter.Value>                                        
+                                        <SolidColorBrush Color="{Binding DataContext.SelectedStudent.LabelColorDark, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="BotRec" Property="Fill" >
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{Binding DataContext.SelectedStudent.LabelColorDark, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
 
                         </ControlTemplate.Triggers>
@@ -101,9 +117,6 @@
             </Setter>
         </Style>
 
-        <local:EnumToVisibilityConverter x:Key="EnumToVis" />
-
-        <local:EnumBooleanConverter x:Key="EnumToBool" />
 
         <BooleanToVisibilityConverter x:Key="BtoV"/>
 
@@ -113,7 +126,7 @@
         <Grid.Background >
             <ImageBrush ImageSource="H:\Software\C#\UI\Student_Data\Student_Data\assets\Back.jpg" />
         </Grid.Background>
-        <Grid Margin="5,0" >
+        <Grid Margin="5,5" >
 
 
             <Grid.RowDefinitions>
@@ -121,7 +134,6 @@
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="45"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
             <TextBlock Text="{Binding SchoolName}" VerticalAlignment="Top" Foreground="Navy" FontSize="30"  FontFamily="Cambria"  FontWeight="Bold" HorizontalAlignment="Center" Grid.Row="0" Margin="0,0,0,0"/>
@@ -137,7 +149,7 @@
                 <Rectangle Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="40" Height="5" Fill="ForestGreen" RadiusX="2.5" RadiusY="2.5" Margin="10"/>
             </Grid>
 
-            <ScrollViewer Grid.Row="2">
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" x:Name="StudentsScroll">
                 
 
             <ItemsControl ItemsSource="{Binding Students}" x:Name="StudentsItemsControl">
@@ -145,7 +157,7 @@
                     <DataTemplate>
 
                         <Grid>
-                            <Border Background="White" Margin="5" CornerRadius="15" Height="40">
+                            <Border Background="White" Margin="5" CornerRadius="18" Height="40">
 
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
@@ -153,7 +165,7 @@
 
                             </Border>
 
-                            <Border Margin="5" CornerRadius="15" Height="40" MouseDown="StudentData_MouseDown" >
+                            <Border Margin="5" CornerRadius="18" Height="40" MouseDown="StudentData_MouseDown" >
 
                                 <Border.Background >
                                     <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.5" />
@@ -220,7 +232,7 @@
                     </Border.Effect>
                 </Border>
 
-                <Border CornerRadius="15">
+                <Border CornerRadius="15" >
                     <Border.Background>
                         <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.3" />
                     </Border.Background>
@@ -279,6 +291,7 @@
                                 <TextBlock Text="Roll No : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBlock Text="Date of Birth : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
                                 <TextBlock Text="Father Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBlock Text="Mother Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Text="Blood Group : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Text="Address : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
@@ -288,22 +301,19 @@
                                 <TextBlock Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBlock Text="{Binding DateOfBirth}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
                                 <TextBlock Text="{Binding FatherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBlock Text="{Binding MotherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
                         </Grid>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
 
                             <StackPanel >
 
 
-                                <Grid >
 
-
-                                </Grid>
-
-                                <TextBlock Text="Examinations" Margin="10,5" FontSize="16" FontWeight="SemiBold" />
+                                <TextBlock Text="Examinations" Margin="10,5,10,0" FontSize="16" FontWeight="SemiBold" />
 
                                 <ItemsControl ItemsSource="{Binding Exams}">
                                     <ItemsControl.ItemTemplate>
@@ -324,14 +334,27 @@
 
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition/>
-                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition Width="150"/>
+                                                            <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Text="{Binding Name}" Grid.Row="0" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Bottom" Margin="10,0" />
 
-                                                        <Rectangle Width="100" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="LightGray" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
-                                                        <Rectangle Width="{Binding Percentage}" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="Green" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
+                                                        <StackPanel Grid.Column="1"  Orientation="Horizontal" HorizontalAlignment="Right">
 
+                                                            <Grid HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                            
+                                                        
+                                                            <Rectangle Width="100" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="LightGray" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
+                                                            <Rectangle Width="{Binding Percentage}" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="Green" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
+
+                                                            </Grid>
+                                                            
+                                                            <TextBlock Text="{Binding TotalScored}" FontSize="14" FontWeight="SemiBold"/>
+                                                            <TextBlock Text=" / "  FontSize="14"  FontWeight="SemiBold"/>
+                                                            <TextBlock Text="{Binding TotalMarks}"  FontSize="14"  FontWeight="SemiBold"/>
+
+                                                            
+                                                        </StackPanel>
                                                     </Grid>
 
                                                     <Grid Grid.Row="1" >
@@ -381,7 +404,7 @@
                         </ScrollViewer>
 
 
-                        <Border Grid.Row="2" VerticalAlignment="Stretch" CornerRadius="0,0,20,20">
+                        <Border Grid.Row="2" VerticalAlignment="Stretch" CornerRadius="0,0,15,15">
                             <Border.Background>
                                 <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.7"/>
                             </Border.Background>
