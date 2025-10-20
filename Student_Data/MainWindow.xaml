@@ -39,7 +39,7 @@
             </Setter>
         </Style>
 
-        
+
         <SolidColorBrush x:Key="RadioButton.Static.Background" Color="#FFFFFFFF"/>
         <SolidColorBrush x:Key="RadioButton.Static.Border" Color="#FF707070"/>
 
@@ -104,11 +104,17 @@
         <local:EnumToVisibilityConverter x:Key="EnumToVis" />
 
         <local:EnumBooleanConverter x:Key="EnumToBool" />
-        
+
+        <BooleanToVisibilityConverter x:Key="BtoV"/>
+
     </Window.Resources>
 
     <Grid Margin="5,0">
 
+        <Grid.Background >
+            <ImageBrush ImageSource="H:\Software\C#\UI\Student_Data\Student_Data\assets\Back.jpg" />
+        </Grid.Background>
+        
         <Grid.RowDefinitions>
 
             <RowDefinition Height="50"/>
@@ -117,7 +123,7 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding SchoolName}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0"/>
+        <TextBlock Text="{Binding SchoolName}" Foreground="Navy" FontSize="24" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0"/>
         <TextBlock Text="{Binding Class}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0"/>
         <TextBlock Text="{Binding TeacherName}"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>
 
@@ -130,11 +136,20 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
 
-                    <Border Background="WhiteSmoke" Margin="5" CornerRadius="15" Height="40" MouseDown="StudentData_MouseDown" >
-
+                    <Grid>
+                        <Border Background="White" Margin="5" CornerRadius="15" Height="40">
+                        
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
                         </Border.Effect>
+                            
+                        </Border>    
+                    
+                    <Border Margin="5" CornerRadius="15" Height="40" MouseDown="StudentData_MouseDown" >
+
+                        <Border.Background >
+                            <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.7" />
+                        </Border.Background>
 
                         <Grid>
 
@@ -146,8 +161,16 @@
                                 <ColumnDefinition Width="30" />
                             </Grid.ColumnDefinitions>
 
-                            <Ellipse Grid.Column="0" Fill="{Binding LabelColorDim}" Margin="2" />
-                            <TextBlock Text="{Binding Initial}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Foreground="{Binding LabelColorDark}"/>
+                            <Ellipse Grid.Column="0"  Margin="2" >
+                                <Ellipse.Fill>
+                                    <SolidColorBrush Color="{Binding LabelColorDark}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Text="{Binding Initial}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" >
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="WhiteSmoke" Opacity="0.8"/>
+                                </TextBlock.Foreground>
+                            </TextBlock>
 
                             <Grid Grid.Column="1">
                                 <Grid.RowDefinitions>
@@ -169,6 +192,7 @@
                         </Grid>
 
                     </Border>
+                    </Grid>
 
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -179,166 +203,188 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <Border x:Name="SingleStudentDetailBorder" Visibility="Visible" Grid.Row="2" CornerRadius="20" Margin="5" Background="WhiteSmoke" DataContext="{Binding Path=SelectedStudent}" >
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
-            </Border.Effect>
+        <Grid x:Name="SingleStudentDetailBorder" Visibility="Visible" Grid.Row="2" Margin="5" DataContext="{Binding Path=SelectedStudent}" >
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="50"/>
-                </Grid.RowDefinitions>
+            <Border CornerRadius="20" Background="White" >
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
+                </Border.Effect>
+            </Border>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="65"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                    </Grid.ColumnDefinitions>
+            <Border CornerRadius="20">
+                <Border.Background>
+                    <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.4" />
+                </Border.Background>
 
-                    <TextBlock Text="{Binding Name}" VerticalAlignment="Top" FontSize="16" FontWeight="SemiBold" Margin="10,5,0,0" Grid.Column="0" />
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
 
-                    <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" />
-                    <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="65"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Image Grid.Column="1" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\trophy.png" Height="30" HorizontalAlignment="Right"/>
-                    <TextBlock Text="{Binding Rank}" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Margin="5,0,0,0" Grid.Column="2" />
-                    <TextBlock Text="Close X" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="14" FontWeight="SemiBold" Margin="0,4,4,0" Grid.Column="3" MouseDown="Close_MouseDown"/>
-                </Grid>
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Top" FontSize="16" FontWeight="SemiBold" Margin="10,5,0,0" Grid.Column="0" Foreground="{Binding LabelColorDark}" />
 
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
+                        <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" />
+                        <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" />
 
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <Image Grid.Column="1" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\trophy.png" Height="30" HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding Rank}" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Margin="5,0,0,0" Grid.Column="2" />
+                        <TextBlock Text="Close X" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="14" FontWeight="SemiBold" Margin="0,4,4,0" Grid.Column="3" MouseDown="Close_MouseDown"/>
+                    </Grid>
 
-                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="1"  Visibility="{Binding DataContext.IsPersonalInfo, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}" >
 
-                    <StackPanel Margin="10,5" Grid.Column="0">
-                        <TextBlock Text="Roll No : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
-                        <TextBlock Text="Date of Birth : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
-                        <TextBlock Text="Father Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                        <TextBlock Text="Blood Group : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                        <TextBlock Text="Address : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                    </StackPanel>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
+                        <Grid.ColumnDefinitions>
 
-                    <StackPanel  Margin="10,5" Grid.Column="2">
-                        <TextBlock Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
-                        <TextBlock Text="{Binding DateOfBirth}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
-                        <TextBlock Text="{Binding FatherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                        <TextBlock Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                        <TextBlock Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                    </StackPanel>
-                </Grid>
-                
-                <ScrollViewer Grid.Row="1" Margin="0,0,0,10">
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
 
-                    <StackPanel >
+                        </Grid.ColumnDefinitions>
 
+                        <TextBlock Text="Personal Info" Margin="12,0" FontSize="16" FontWeight="SemiBold" />
 
-                        <Grid >
+                        <StackPanel Margin="10,5" Grid.Column="0" Grid.Row="1">
+                            <TextBlock Text="Roll No : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
+                            <TextBlock Text="Date of Birth : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
+                            <TextBlock Text="Father Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                            <TextBlock Text="Blood Group : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                            <TextBlock Text="Address : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                        </StackPanel>
 
 
-                        </Grid>
+                        <StackPanel  Margin="10,5" Grid.Column="1"  Grid.Row="1">
+                            <TextBlock Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
+                            <TextBlock Text="{Binding DateOfBirth}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
+                            <TextBlock Text="{Binding FatherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                            <TextBlock Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                            <TextBlock Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                        </StackPanel>
+                    </Grid>
 
-                        <TextBlock Text="Exams" Margin="10,5" FontSize="16" FontWeight="SemiBold" />
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
 
-                        <ItemsControl ItemsSource="{Binding Exams}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate >
-                                    <Border Background="WhiteSmoke" Margin="10,5" Height="40" BorderBrush="LightGray" CornerRadius="10" >
+                        <StackPanel >
 
-                                        <Border.Effect>
-                                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.5" />
-                                        </Border.Effect> 
-                                        
-                                        <Grid>
 
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="155"/>
-                                                <ColumnDefinition Width="10"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+                            <Grid >
 
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition />
-                                                    <RowDefinition Height="15" />
-                                            
-                                                </Grid.RowDefinitions>
 
-                                                <TextBlock Text="{Binding Name}" Grid.Row="0" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Bottom" Margin="10,0" />
+                            </Grid>
 
-                                                <Rectangle Width="100" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="LightGray" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" />
-                                                <Rectangle Width="{Binding Percentage}" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="Green" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" />
-                                                
-                                            </Grid>
+                            <TextBlock Text="Examinations" Margin="10,5" FontSize="16" FontWeight="SemiBold" />
 
-                                            <Rectangle Grid.Column="1" Width="3" Height="35" RadiusX="1.5" RadiusY="1.5" Fill="LightGray" HorizontalAlignment="Right" />
+                            <ItemsControl ItemsSource="{Binding Exams}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate >
 
-                                            <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="10,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="30"/>
-                                                    <ColumnDefinition Width="30"/>
-                                                    <ColumnDefinition Width="30"/>
-                                                    <ColumnDefinition Width="30"/>
-                                                    <ColumnDefinition Width="30"/>
-                                                </Grid.ColumnDefinitions>
+                                        <Grid >
+
+                                            <Rectangle Height="2" HorizontalAlignment="Stretch" Fill="LightGray" VerticalAlignment="Top" Margin="0,-1" />
+                                            <Rectangle Height="2" HorizontalAlignment="Stretch" Fill="LightGray" VerticalAlignment="Bottom"  Margin="0,-1" />
+
+
+                                            <Grid Margin="10,5" Height="60" >
 
                                                 <Grid.RowDefinitions>
+                                                    <RowDefinition Height="20"/>
                                                     <RowDefinition/>
-                                                    <RowDefinition/>
-                                                    
                                                 </Grid.RowDefinitions>
 
-                                                <TextBlock Text="L1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Column="0"/>
-                                                <TextBlock Text="L2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Column="1" />
-                                                <TextBlock Text="Ma" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Column="2"/>
-                                                <TextBlock Text="Sc" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Column="3"/>
-                                                <TextBlock Text="Ss" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="14"  Grid.Column="4"/>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Name}" Grid.Row="0" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Bottom" Margin="10,0" />
 
-                                                <TextBlock Text="{Binding Language1}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"  Grid.Column="0"/>
-                                                <TextBlock Text="{Binding Language2}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"   Grid.Column="1"/>
-                                                <TextBlock Text="{Binding Maths}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="2"/>
-                                                <TextBlock Text="{Binding Science}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="3"/>
-                                                <TextBlock Text="{Binding SocialStudies}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="14"  Grid.Row="1" Grid.Column="4"/>
+                                                    <Rectangle Width="100" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="LightGray" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
+                                                    <Rectangle Width="{Binding Percentage}" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="Green" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
+
+                                                </Grid>
+
+                                                <Grid Grid.Row="1" >
+
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <TextBlock Text="Lang 1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Column="0"/>
+                                                    <TextBlock Text="Lang 2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Column="1" />
+                                                    <TextBlock Text="Maths" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Column="2"/>
+                                                    <TextBlock Text="Sceince" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Column="3"/>
+                                                    <TextBlock Text="Social" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="14"  Grid.Column="4"/>
+
+                                                    <TextBlock Text="{Binding Language1}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"  Grid.Column="0"/>
+                                                    <TextBlock Text="{Binding Language2}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"   Grid.Column="1"/>
+                                                    <TextBlock Text="{Binding Maths}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="2"/>
+                                                    <TextBlock Text="{Binding Science}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="3"/>
+                                                    <TextBlock Text="{Binding SocialStudies}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="14"  Grid.Row="1" Grid.Column="4"/>
+
+                                                </Grid>
                                             </Grid>
-                                            
-                  
+
                                         </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
 
-                            <ItemsControl.ItemsPanel >
-                                <ItemsPanelTemplate>
-                                    <StackPanel />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            
-                        </ItemsControl>
+                                <ItemsControl.ItemsPanel >
+                                    <ItemsPanelTemplate>
+                                        <StackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
 
-                    </StackPanel>
-                </ScrollViewer>
+                            </ItemsControl>
+
+                        </StackPanel>
+                    </ScrollViewer>
 
 
-                <Grid  Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <Border Grid.Row="2" VerticalAlignment="Stretch" CornerRadius="0,0,20,20">
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.7"/>
+                        </Border.Background>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <RadioButton Content="Personal Details" Style="{StaticResource NavRadio}" Margin="5,0" Grid.Column="0" HorizontalAlignment="Right" />
-                    <RadioButton Content="Exams" Style="{StaticResource NavRadio}" Margin="5,0"   Grid.Column="1" HorizontalAlignment="Left" />
+                        <Grid  HorizontalAlignment="Stretch" >
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <RadioButton Content="Personal Info" Style="{StaticResource NavRadio}" Margin="5,0" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" IsChecked="{Binding DataContext.IsPersonalInfo, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
+                            <RadioButton Content="Examinations" Style="{StaticResource NavRadio}" Margin="5,0"  VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Left" IsChecked="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
+                        </Grid>
+                    </Border>
+
                 </Grid>
-                
-            </Grid>
 
-        </Border>
+            </Border>
+
+
+        </Grid>
     </Grid>
 </Window>

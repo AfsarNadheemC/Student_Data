@@ -105,6 +105,8 @@ namespace Student_Data
 
             ViewModel.SetRank();
 
+            ViewModel.IsExaminations = true;
+
             this.DataContext = ViewModel;
         }
 
@@ -174,13 +176,44 @@ namespace Student_Data
             set { myVar = value; }
         }
 
+        private bool _IsExaminations = true;
+
+        public bool IsExaminations
+        {
+            get
+            {
+                return _IsExaminations;
+            }
+            set
+            {
+                _IsExaminations = value;
+                OnPropertyChanged(nameof(IsExaminations));
+            }
+        }
+
+        private bool _IsPersonalInfo;
+
+        public bool IsPersonalInfo
+        {
+            get
+            {
+                return _IsPersonalInfo;
+            }
+            set
+            {
+                _IsPersonalInfo = value;
+                OnPropertyChanged(nameof(IsPersonalInfo));
+            }
+        }
+
+
         public void SetRank()
         {
             List<Student> TempStudents = Students.OrderBy(k => k.Percentage).ToList();
 
             foreach (Student student in Students)
             {
-                student.Rank = TempStudents.IndexOf(student);
+                student.Rank = TempStudents.IndexOf(student) + 1;
             }
 
 
@@ -205,8 +238,8 @@ namespace Student_Data
         public string BloodGroup { get; set; }
         public float Percentage { get; set; }
         public SolidColorBrush ProgressColor { get; set; }
-        public SolidColorBrush LabelColorDark { get; set; }
-        public SolidColorBrush LabelColorDim { get; set; }
+        public Color LabelColorDark { get; set; }
+        public Color LabelColorDim { get; set; }
         public string FatherName { get; set; }
         public int Rank { get; set; }
         public char Initial
@@ -307,37 +340,38 @@ namespace Student_Data
     public class CommonColors()
     {
 
-        public static SolidColorBrush[] BackBrushes = new SolidColorBrush[]
+        public static Color[] BackColors = new Color[]
 {
-            new SolidColorBrush( (Color)ColorConverter.ConvertFromString("#e9e0fd")  ), // Violet
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffd6e7")) , // Red
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ccffd0")) , // Green
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c0f5ef")) , // Blue Green
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c2ecfc")) , // Blue
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffe1d6")) , // Orange
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffd6da")) , // Maroon
+            (Color)ColorConverter.ConvertFromString("#e9e0fd"  ), // Violet
+            (Color)ColorConverter.ConvertFromString("#ffd6e7") , // Red
+            (Color)ColorConverter.ConvertFromString("#ccffd0") , // Green
+            (Color)ColorConverter.ConvertFromString("#c0f5ef") , // Blue Green
+            (Color)ColorConverter.ConvertFromString("#c2ecfc") , // Blue
+            (Color)ColorConverter.ConvertFromString("#ffe1d6") , // Orange
+            (Color)ColorConverter.ConvertFromString("#ffd6da") , // Maroon
 
 };
 
-        public static SolidColorBrush[] ForeBrushes = new SolidColorBrush[]
+
+        public static Color[] ForeColors = new Color[]
         {
-            new SolidColorBrush( (Color)ColorConverter.ConvertFromString("#6950d4")  ), // Violet
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#e2026b")) , // Red
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#058c50")) , // Green
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#046d68")) , // Blue Green
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0282b8")) , // Blue
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#cd4b26")) , // Orange
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#96062f")) , // Maroon
+            (Color)ColorConverter.ConvertFromString("#6950d4"  ), // Violet
+            (Color)ColorConverter.ConvertFromString("#e2026b") , // Red
+      (Color)ColorConverter.ConvertFromString("#058c50") , // Green
+         (Color)ColorConverter.ConvertFromString("#046d68") , // Blue Green
+    (Color)ColorConverter.ConvertFromString("#0282b8") , // Blue
+        (Color)ColorConverter.ConvertFromString("#cd4b26") , // Orange
+          (Color)ColorConverter.ConvertFromString("#96062f") , // Maroon
 
         };
 
-        public static (SolidColorBrush, SolidColorBrush) GetRandomColor()
+        public static (Color, Color) GetRandomColor()
         {
             Random RD = new Random();
 
             int Index = RD.Next(6);
 
-            return (ForeBrushes[Index], BackBrushes[Index]);
+            return (ForeColors[Index], BackColors[Index]);
 
         }
     }
