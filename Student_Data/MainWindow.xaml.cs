@@ -12,6 +12,9 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SqlClient;
+using System.Data;
+
 
 namespace Student_Data
 {
@@ -22,359 +25,48 @@ namespace Student_Data
     {
         public ViewModel ViewModel;
         Storyboard SingleStudentAni;
+
+        string ConnectionString = "Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;";
+
+        SqlConnection Connection = new SqlConnection("Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;"); 
+
         public MainWindow()
         {
             InitializeComponent();
 
-            ViewModel = new ViewModel(new ObservableCollection<Student>
+            string sql = "Select * from Students ";
+
+            SqlCommand cmd = new SqlCommand(sql, Connection);
+
+            Connection.Open();
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            DataTable dt = new DataTable();
+
+            dt.Load(reader);
+
+            Connection.Close();
+
+            var rs = dt.Rows;
+
+            ObservableCollection<Student> Students = new ObservableCollection<Student>();
+
+            foreach  (DataRow v in rs)
             {
+                Students.Add(new Student(v.ItemArray));
+            }
 
-                new Student(
-                    "Isaac Newton",
-                    "Woolsthorpe-by-Colsterworth, Lincolnshire, England",
-                    new DateOnly (2015,1, 4),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 95, 90, 95, 90, 93),
-                        new Exam("Term 1", "Sep 2025", 33, 42, 44, 36, 40),
-                        new Exam("Internal 2", "Nov 2025", 33, 42, 44, 36, 40),
-
-                        new Exam("Term 2", "Dec 2025", 65, 90, 95, 60, 66),
-                        new Exam("Internal 3", "Feb 2026", 66, 92, 94, 66, 90),
-                        new Exam("Term 3", "Apr 2026", 66, 92, 94, 66, 90),
-
-                    }        ,"A+ve"       , "Newton" , "Hannah"    ),
-
-                new Student(
-                    "Albert Einstein",
-                    "Ulm, Kingdom of Württemberg, German Empire",
-                    new DateOnly (2015,3, 14),
-                    new ObservableCollection<Exam>
-                    {
-                        new Exam("Internal 1", "Aug 2025", 45, 30, 35, 40, 44),
-                        new Exam("Term 1", "Sep 2025", 44, 34, 34, 46, 30),
-                        new Exam("Internal 2", "Nov 2025", 44, 34, 34, 46, 30),
-
-                        new Exam("Term 2", "Dec 2025", 95, 90, 95, 90, 93),
-                        new Exam("Internal 3", "Feb 2026", 33, 42, 44, 36, 40),
-                        new Exam("Term 3",  "Apr 2026", 33, 42, 44, 36, 40),
-
-                    }      ,   "B+ve"     , "Hermann"     , "Pauline"    ),
-
-                new Student(
-                    "Abdul Kalam",
-                    "Rameswaram, Tamil Nadu, India",
-                    new DateOnly (2014,10, 15),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 55, 40, 65, 50, 61),
-                        new Exam("Term 1", "Sep 2025", 61, 52, 74, 46, 50),
-                        new Exam("Internal 2","Nov 2025", 51, 42, 64, 46, 70),
-
-
-                        new Exam("Term 2", "Dec 2025", 65, 90, 95, 60, 66),
-                        new Exam("Internal 3", "Feb 2026", 66, 92, 94, 66, 90),
-                        new Exam("Term 3",  "Apr 2026", 66, 92, 94, 66, 90),
-
-                    }          ,"O+ve"     , "Jainullabiddin" , "Ashiamma"        ),
-
-                new Student(
-                    "Thomas Alva Edison",
-                    "Milan, Ohio, U.S.",
-                    new DateOnly (2015,2, 11),
-                    new ObservableCollection<Exam>
-                    {
-                        new Exam("Internal 1","Aug 2025", 75, 40, 65, 50, 61),
-                        new Exam("Term 1", "Sep 2025", 71, 52, 74, 46, 50),
-                        new Exam("Internal 2", "Nov 2025", 51, 42, 64, 46, 70),
-
-
-                        new Exam("Term 2", "Dec 2025", 15, 30, 35, 10, 11),
-                        new Exam("Internal 3", "Feb 2026", 11, 34, 34, 16, 30),
-                        new Exam("Term 3",  "Apr 2026", 11, 34, 34, 16, 30),
-
-
-                    }      ,"AB+ve"      , "Samuel" , "Nancy"           ),
-
-                new Student(
-                    "Nikola Tesla",
-                    "Smiljan, Austrian Empire",
-                    new DateOnly (2015,1,7),
-                    new ObservableCollection<Exam>
-                    {
-
-
-                        new Exam("Internal 1", "Aug 2025", 75, 70, 75, 70, 71),
-                        new Exam("Term 1", "Sep 2025", 71, 74, 74, 76, 70),
-                        new Exam("Internal 2", "Nov 2025", 71, 74, 74, 76, 70),
-
-                        new Exam("Term 2", "Dec 2025", 75, 70, 75, 70, 74),
-                        new Exam("Internal 3", "Feb 2026", 74, 74, 74, 76, 70),
-                        new Exam("Term 3",  "Apr 2026", 74, 74, 74, 76, 70),
-
-
-                    }      ,"A-ve"      , "Milutin" , "Duka"          ),
-
-                new Student(
-                    "Stephen Hawking",
-                    "Oxford, England",
-                    new DateOnly (2015,1,2),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 45, 30, 35, 40, 44),
-                        new Exam("Term 1", "Sep 2025", 44, 34, 34, 46, 30),
-                        new Exam("Internal 2", "Nov 2025", 44, 34, 34, 46, 30),
-
-                        new Exam("Term 2", "Dec 2025", 25, 30, 35, 20, 22),
-                        new Exam("Internal 3", "Feb 2026", 22, 32, 34, 26, 30),
-                        new Exam("Term 3",  "Apr 2026", 22, 32, 34, 26, 30),
-
-                    }         ,"B-ve"    , "Frank" , "Isobel"          ),
-
-                new Student(
-                    "Marie Curie",
-                    "Warsaw, Congress Poland, Russian Empire",
-                    new DateOnly (2014,11, 07), // Year , M , D
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 95, 90, 95, 90, 93),
-                        new Exam("Term 1", "Sep 2025", 33, 42, 44, 36, 40),
-                        new Exam("Internal 2", "Nov 2025", 33, 42, 44, 36, 40),
-
-                        new Exam("Term 2", "Dec 2025", 65, 90, 95, 60, 66),
-                        new Exam("Internal 3", "Feb 2026", 66, 92, 94, 66, 90),
-                        new Exam("Term 3", "Apr 2026", 66, 92, 94, 66, 90),
-
-                    }        ,"O-ve"       , "Skłodowski" , "Bronisława"      ),
-
-                new Student(
-                    "Louis Pasteur",
-                    "Dole, France",
-                    new DateOnly (2014,12, 27),
-                    new ObservableCollection<Exam>
-                    {
-                        new Exam("Internal 1", "Aug 2025", 45, 30, 35, 40, 44),
-                        new Exam("Term 1", "Sep 2025", 44, 34, 34, 46, 30),
-                        new Exam("Internal 2", "Nov 2025", 44, 34, 34, 46, 30),
-
-                        new Exam("Term 2", "Dec 2025", 95, 90, 95, 90, 93),
-                        new Exam("Internal 3", "Feb 2026", 33, 42, 44, 36, 40),
-                        new Exam("Term 3",  "Apr 2026", 33, 42, 44, 36, 40),
-
-                    }      ,   "AB-ve"     , "Joseph" , "Étiennette "          ),
-
-                new Student(
-                    "Gregor Mendel",
-                    "Heinzendorf bei Odrau, Silesia, Austrian Empire",
-                    new DateOnly (2014,07, 20),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 55, 40, 65, 50, 61),
-                        new Exam("Term 1", "Sep 2025", 61, 52, 74, 46, 50),
-                        new Exam("Internal 2","Nov 2025", 51, 42, 64, 46, 70),
-
-
-                        new Exam("Term 2", "Dec 2025", 65, 90, 95, 60, 66),
-                        new Exam("Internal 3", "Feb 2026", 66, 92, 94, 66, 90),
-                        new Exam("Term 3",  "Apr 2026", 66, 92, 94, 66, 90),
-
-                    }          ,"A+ve"     , "Anton " , "Rosine "         ),
-
-                new Student(
-                    "Michael Faraday",
-                    "Newington Butts, Surrey, England",
-                    new DateOnly (2014,09, 22),
-                    new ObservableCollection<Exam>
-                    {
-                        new Exam("Internal 1","Aug 2025", 55, 40, 65, 50, 61),
-                        new Exam("Term 1", "Sep 2025", 61, 52, 74, 46, 50),
-                        new Exam("Internal 2", "Nov 2025", 51, 42, 64, 46, 70),
-
-
-                        new Exam("Term 2", "Dec 2025", 85, 80, 85, 80, 81),
-                        new Exam("Internal 3", "Feb 2026", 81, 84, 84, 86, 80),
-                        new Exam("Term 3",  "Apr 2026", 81, 84, 84, 86, 80),
-
-
-                    }      ,"B+ve"      , "James" , "Margaret"            ),
-
-                new Student(
-                    "C. V. Raman",
-                    "Tiruchirapalli, Madras Presidency, British Raj, British Empire",
-                    new DateOnly (2014,11,07),
-                    new ObservableCollection<Exam>
-                    {
-
-
-                        new Exam("Internal 1", "Aug 2025", 95, 90, 95, 90, 91),
-                        new Exam("Term 1", "Sep 2025", 91, 94, 94, 96, 90),
-                        new Exam("Internal 2", "Nov 2025", 91, 94, 94, 96, 90),
-
-                        new Exam("Term 2", "Dec 2025", 95, 90, 90, 90, 94),
-                        new Exam("Internal 3", "Feb 2026", 94, 94, 94, 96, 90),
-                        new Exam("Term 3",  "Apr 2026", 94, 94, 94, 96, 90),
-
-
-                    }      ,"O+ve"      , "Ramanathan" , "Parvathi"            ),
-
-                new Student(
-                    "James Clerk Maxwell",
-                    "Cambridge, England",
-                    new DateOnly (2014,06,13),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 95, 90, 95, 90, 94),
-                        new Exam("Term 1", "Sep 2025", 94, 94, 94, 96, 90),
-                        new Exam("Internal 2", "Nov 2025", 94, 94, 94, 96, 90),
-
-                        new Exam("Term 2", "Dec 2025", 95,90, 95, 90, 92),
-                        new Exam("Internal 3", "Feb 2026", 92, 92, 94, 96, 90),
-                        new Exam("Term 3",  "Apr 2026", 92, 92, 94, 96, 90),
-
-                    }         ,"AB+ve"   , "Jhon"  , "Frances"         ),
-
-
-                new Student(
-                    "Homi Jehangir Bhabha",
-                    "Bombay Presidency, British India",
-                    new DateOnly (2014,10, 30),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 95, 90, 95, 90, 93),
-                        new Exam("Term 1", "Sep 2025", 33, 42, 44, 36, 40),
-                        new Exam("Internal 2", "Nov 2025", 33, 42, 44, 36, 40),
-
-                        new Exam("Term 2", "Dec 2025", 65, 90, 95, 60, 66),
-                        new Exam("Internal 3", "Feb 2026", 66, 92, 94, 66, 90),
-                        new Exam("Term 3", "Apr 2026", 66, 92, 94, 66, 90),
-
-                    }        ,"A-ve"       , "Jehangir" , "Meherbai"      ),
-
-                new Student(
-                    "Ernest Rutherford",
-                    "Brightwater, Nelson Province, Colony of New Zealand",
-                    new DateOnly (2014,08, 30),
-                    new ObservableCollection<Exam>
-                    {
-                        new Exam("Internal 1", "Aug 2025", 45, 30, 35, 40, 44),
-                        new Exam("Term 1", "Sep 2025", 44, 34, 34, 46, 30),
-                        new Exam("Internal 2", "Nov 2025", 44, 34, 34, 46, 30),
-
-                        new Exam("Term 2", "Dec 2025", 95, 90, 95, 90, 93),
-                        new Exam("Internal 3", "Feb 2026", 33, 42, 44, 36, 40),
-                        new Exam("Term 3",  "Apr 2026", 33, 42, 44, 36, 40),
-
-                    }      ,   "B-ve"     , "James" , "Martha"          ),
-
-                new Student(
-                    "Enrico Fermi",
-                    "Rome, Italy",
-                    new DateOnly (2014,09, 29),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 85, 80, 85, 80, 81),
-                        new Exam("Term 1", "Sep 2025", 81, 82, 84, 86, 80),
-                        new Exam("Internal 2","Nov 2025", 81, 82, 84, 86, 90),
-
-
-                        new Exam("Term 2", "Dec 2025", 85, 80, 85, 80, 86),
-                        new Exam("Internal 3", "Feb 2026", 86, 82, 84, 86, 90),
-                        new Exam("Term 3",  "Apr 2026",86, 82, 94, 86, 90),
-
-                    }          ,"AB-ve"     , "Alberto" , "Fermi"         ),
-
-                new Student(
-                    "J. Robert Oppenheimer",
-                    "New York City, U.S.",
-                    new DateOnly (2015,04, 22),
-                    new ObservableCollection<Exam>
-                    {
-                        new Exam("Internal 1","Aug 2025", 55, 40, 65, 50, 61),
-                        new Exam("Term 1", "Sep 2025", 61, 52, 74, 46, 50),
-                        new Exam("Internal 2", "Nov 2025", 51, 42, 64, 46, 70),
-
-
-                        new Exam("Term 2", "Dec 2025", 15, 30, 35, 10, 11),
-                        new Exam("Internal 3", "Feb 2026", 11, 34, 34, 16, 30),
-                        new Exam("Term 3",  "Apr 2026", 11, 34, 34, 16, 30),
-
-
-                    }      ,"O-ve"      , "Seligmann" , "Ella"            ),
-
-                new Student(
-                    "J. J. Thomson",
-                    
-                    "Manchester, England, UK",
-                    new DateOnly (2014,12,18),
-                    new ObservableCollection<Exam>
-                    {
-
-
-                        new Exam("Internal 1", "Aug 2025", 75, 70, 75, 70, 71),
-                        new Exam("Term 1", "Sep 2025", 71, 74, 74, 76, 70),
-                        new Exam("Internal 2", "Nov 2025", 71, 74, 74, 76, 70),
-
-                        new Exam("Term 2", "Dec 2025", 75, 70, 75, 70, 74),
-                        new Exam("Internal 3", "Feb 2026", 74, 74, 74, 76, 70),
-                        new Exam("Term 3",  "Apr 2026", 74,74, 74, 76, 70),
-
-
-                    }      ,"A+ve"      , "Joseph" , "Emma"            ),
-
-                new Student(
-                    "Aristotle",
-                    
-                    "Stagira, Chalcidian League",
-                    new DateOnly (2015,1,2),
-                    new ObservableCollection<Exam>
-                    {
-
-                        new Exam("Internal 1", "Aug 2025", 45, 30, 35, 40, 44),
-                        new Exam("Term 1", "Sep 2025", 44, 34, 34, 46, 30),
-                        new Exam("Internal 2", "Nov 2025", 44, 34, 34, 46, 30),
-
-                        new Exam("Term 2", "Dec 2025", 25, 30, 35, 20, 22),
-                        new Exam("Internal 3", "Feb 2026", 22, 32, 34, 26, 30),
-                        new Exam("Term 3",  "Apr 2026", 22, 32, 34, 26, 30),
-
-                    }         ,"B+ve"    , "Nicomachus" , "Phaestis"           ),
-
-                             
-                new Student(
-                    "Plato",
-                    "Athens",
-                    new DateOnly (2015,04, 22),
-                    new ObservableCollection<Exam>
-                    {
-                        new Exam("Internal 1","Aug 2025", 55, 40, 65, 50, 61),
-                        new Exam("Term 1", "Sep 2025", 61, 52, 74, 46, 50),
-                        new Exam("Internal 2", "Nov 2025", 51, 42, 64, 46, 70),
-
-                        new Exam("Term 2", "Dec 2025", 15, 30, 35, 10, 11),
-                        new Exam("Internal 3", "Feb 2026", 11, 34, 34, 16, 30),
-                        new Exam("Term 3",  "Apr 2026", 11, 34, 34, 16, 30),
-
-
-                    }      ,"AB+ve"      , "Athenian " , "Perictione"            ),
-
-            });
-
-            ViewModel.SetRank();
-            ViewModel.SetRollNumber();
+            ViewModel = new ViewModel(Students);
 
             this.DataContext = ViewModel;
+
+
         }
 
         private void StudentData_MouseDown(object sender, MouseButtonEventArgs e)
-        {
+        { 
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 if (sender is Border SelectedBorder)
@@ -529,13 +221,27 @@ namespace Student_Data
                 return Name[0];
             }
         }
+
+        public Student(object[] Objects)
+        {
+            RollNumber = Objects[0] as string;
+            Name = Objects[1] as string;
+            FatherName = Objects[2] as string;
+            MotherName = Objects[3] as string;
+            BloodGroup = Objects[4] as string;
+            Address = Objects[5] as string;
+
+
+            (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
+        }
+
         public Student(string name, string address, DateOnly dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup, string fatherName , string motherName)
         {
-            Name = name;
-            Address = address;
+            Name = name;    //
+            Address = address;  //
             DateOfBirth = dateOfBirth;
             Exams = exams;
-            BloodGroup = bloodGroup;
+            BloodGroup = bloodGroup;    //
 
             float TotalPercentage = 0f;
 
