@@ -413,7 +413,7 @@ namespace Student_Data
         public string SchoolName { get; set; } = "Springfield High School";
         public string TeacherName { get; set; } = "Galileo Galilei";
         public string Class { get; set; } = "5B";
-        public int Percentage { get; set; }
+        public float Percentage { get; set; }
         public ObservableCollection<Student> Students { get; set; } = students;
 
         private Student _SelectedStudent;
@@ -474,6 +474,8 @@ namespace Student_Data
         public void SetRank()
         {
             List<Student> TempStudents = Students.OrderByDescending(k => k.Percentage).ToList();
+
+            Percentage = Students.Sum(k => k.Percentage) / Students.Count;
 
             foreach (Student student in Students)
             {

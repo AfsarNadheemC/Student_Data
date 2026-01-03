@@ -145,8 +145,8 @@
             <Grid Background="Transparent" HorizontalAlignment="Right" Grid.Row="1" >
 
                 <TextBlock Text="{Binding Class}" FontSize="24" FontFamily="Cambria"  FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Margin="10,0"/>
-                <Rectangle Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Width="80" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="10"/>
-                <Rectangle Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="40" Height="5" Fill="ForestGreen" RadiusX="2.5" RadiusY="2.5" Margin="10"/>
+                <Rectangle Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="10"/>
+                <Rectangle Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="{Binding Percentage}" Height="5" Fill="ForestGreen" RadiusX="2.5" RadiusY="2.5" Margin="10"/>
             </Grid>
 
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" x:Name="StudentsScroll">
