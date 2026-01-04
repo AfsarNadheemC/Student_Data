@@ -131,6 +131,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
         <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
         <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
@@ -178,6 +179,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
         <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
         <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
         <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
@@ -428,7 +430,7 @@
                             <Image Grid.Column="1" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\trophy.png" Height="30" HorizontalAlignment="Right"/>
                             <TextBlock Text="{Binding Rank}" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Margin="5,0,0,0" Grid.Column="2" />
 
-                            <Border Margin="0,4,4,0" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" Padding="4" Background="Crimson" CornerRadius="10" MouseDown="Close_MouseDown" >
+                            <Border Margin="0,5,5,0" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" Padding="8,4" Background="#DD5555" CornerRadius="10" MouseDown="Close_MouseDown" >
 
                                 <TextBlock Text="Close X" Foreground="WhiteSmoke" FontSize="14" FontWeight="SemiBold" />
                             </Border>
@@ -472,7 +474,62 @@
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
 
-                            <Button VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="Add" Height="40" Width="100" Style="{StaticResource FloatBtn}" Margin="10" x:Name="SingleAdd" Click="SingleAdd_Click"/>
+                            <Button Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding DataContext.SingleText , RelativeSource={RelativeSource AncestorType=Window}}" Height="40" Width="100" Margin="10" x:Name="SingleAdd" Click="SingleAdd_Click" >
+                                <Button.Style>
+                                    
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual1}"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" >
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{Binding LabelColorDark}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                    <Setter Property="FontSize" Value="15"/>
+                                        <Setter Property="Foreground" >
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{Binding LabelColorDark}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="1"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border CornerRadius="15" x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                                                    <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+
+                                                    <Trigger Property="IsMouseOver" Value="true">
+                                                            <Setter Property="Background" TargetName="border" >
+                                                                <Setter.Value >
+                                                                    <SolidColorBrush Color="{Binding LabelColorDim}" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsPressed" Value="true">
+                                                            <Setter Property="Background" TargetName="border" >
+                                                                <Setter.Value >
+                                                                    <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.5" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                    </Trigger>
+
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+
+
+                                </Button.Style>
+                            </Button>
                         </Grid>
 
                         <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">

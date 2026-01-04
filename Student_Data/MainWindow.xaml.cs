@@ -34,7 +34,7 @@ namespace Student_Data
         {
             InitializeComponent();
 
-            string sql = "Select * from Students ";
+            string sql = "Select * from Students";
 
             SqlCommand cmd = new SqlCommand(sql, Connection);
 
@@ -131,50 +131,110 @@ namespace Student_Data
             }
 
             ViewModel.SelectedStudent = ViewModel.SelectedStudent = new Student((int.Parse(ViewModel.Students.Last().RollNumber) + 1).ToString());
+
+            ViewModel.SingleText = "Add";
+
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
+            string sql = "DELETE FROM Students WHERE RollNo = @RollNo";
+
+            SqlCommand cmd = new SqlCommand(sql, Connection);
+
+            Connection.Open();
+
+            cmd.Parameters.AddWithValue("RollNo", ViewModel.SelectedStudent.RollNumber);
+
+            if (cmd.ExecuteNonQuery() > 0)
+            {
+                ViewModel.Students.Remove(ViewModel.SelectedStudent);
+            }
+
+
+
+            Connection.Close();
+
 
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+            SingleStudentDetailBorder.Visibility = Visibility.Visible;
 
+            ViewModel.SelectedStudent.IsReadOnly = false;
+
+            ViewModel.SingleText = "Update";
         }
 
         private void SingleAdd_Click(object sender, RoutedEventArgs e)
         {
-            Student SD = SingleStudentDetailBorder.DataContext as Student;
-            ViewModel.Students.Add(SD);
 
-            string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @FullAddress, @Grade)";
-            SqlCommand cmd = new SqlCommand (sql, Connection);
-
-            Connection.Open();
-
-            cmd.Parameters.AddWithValue("RollNo" , SD.RollNumber);
-            cmd.Parameters.AddWithValue("FullName", SD.Name);
-            cmd.Parameters.AddWithValue("FatherName", SD.FatherName);
-            cmd.Parameters.AddWithValue("MotherName", SD.MotherName);
-            cmd.Parameters.AddWithValue("BloodGroup", SD.BloodGroup);
-            cmd.Parameters.AddWithValue("FullAddress", SD.Address);
-            cmd.Parameters.AddWithValue("Grade", ViewModel.Students.Last().Rank + 1);
-
-            if ( cmd.ExecuteNonQuery() > 0)
+            if (ViewModel.SingleText == "Add")
             {
-                MessageBox.Show("Added");
-                ViewModel.SelectedStudent = new Student( (int.Parse ( ViewModel.Students.Last().RollNumber) + 1 ).ToString());
-            }
+                //return;
+                Student SD = SingleStudentDetailBorder.DataContext as Student;
+                ViewModel.Students.Add(SD);
+
+                string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @FullAddress, @Grade)";
+                SqlCommand cmd = new SqlCommand (sql, Connection);
+
+                Connection.Open();
+
+                cmd.Parameters.AddWithValue("@RollNo" , SD.RollNumber);
+                cmd.Parameters.AddWithValue("@FullName", SD.Name);
+                cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
+                cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
+                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
+                cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
+
+                if ( cmd.ExecuteNonQuery() > 0)
+                {
+                    MessageBox.Show("Added");
+                    ViewModel.SelectedStudent = new Student( (int.Parse ( ViewModel.Students.Last().RollNumber) + 1 ).ToString());
+                }
 
 
             
-            Connection.Close();
+                Connection.Close();
+
+            }
+            else
+            {
+                Student SD = SingleStudentDetailBorder.DataContext as Student;
+                ViewModel.Students.Add(SD);
+
+                string sql = "UPDATE INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @FullAddress, @Grade)";
+                SqlCommand cmd = new SqlCommand(sql, Connection);
+
+                Connection.Open();
+
+                cmd.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd.Parameters.AddWithValue("@FullName", SD.Name);
+                cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
+                cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
+                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
+                cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
+
+                if (cmd.ExecuteNonQuery() > 0)
+                {
+                    MessageBox.Show("Added");
+                    ViewModel.SelectedStudent = new Student((int.Parse(ViewModel.Students.Last().RollNumber) + 1).ToString());
+                }
+
+
+
+                Connection.Close();
+            }
+
         }
     }
 
     public class ViewModel(ObservableCollection<Student> students) : INotifyPropertyChanged
     {
+
         public string SchoolName { get; set; } = "Springfield High School";
         public string TeacherName { get; set; } = "Galileo Galilei";
         public string Class { get; set; } = "5B";
@@ -235,6 +295,14 @@ namespace Student_Data
             }
         }
 
+        private string _SingleText;
+
+        public string SingleText
+        {
+            get { return _SingleText; }
+            set { _SingleText = value; OnPropertyChanged(nameof(SingleText)); }
+        }
+
 
         public void SetRank()
         {
@@ -290,6 +358,7 @@ namespace Student_Data
             }
         }
 
+        
         public string Address { get; set; }
         public DateOnly DateOfBirth { get; set; }
         public ObservableCollection<Exam> Exams { get; set; }
