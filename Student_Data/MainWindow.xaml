@@ -100,7 +100,7 @@
 
                             <Trigger Property="IsChecked" Value="true">
                                 <Setter Property="Foreground" >
-                                    <Setter.Value>                                        
+                                    <Setter.Value>
                                         <SolidColorBrush Color="{Binding DataContext.SelectedStudent.LabelColorDark, RelativeSource={RelativeSource AncestorType=Window}}"/>
                                     </Setter.Value>
                                 </Setter>
@@ -119,6 +119,109 @@
 
 
         <BooleanToVisibilityConverter x:Key="BtoV"/>
+
+        <local:InverseBoolToVis x:Key="IBtoV"/>
+
+        <Style x:Key="FocusVisual1">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+
+        <Style x:Key="FloatBtn" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual1}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="15" x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+        <Style x:Key="TextBoxStyle1" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
 
     </Window.Resources>
 
@@ -141,7 +244,7 @@
             <Rectangle Fill="#dddddd" Height="2" Margin="-5,0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" />
 
             <TextBlock Text="{Binding TeacherName}" FontFamily="Cambria"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>
-            
+
             <Grid Background="Transparent" HorizontalAlignment="Right" Grid.Row="1" >
 
                 <TextBlock Text="{Binding Class}" FontSize="24" FontFamily="Cambria"  FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Margin="10,0"/>
@@ -150,81 +253,142 @@
             </Grid>
 
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" x:Name="StudentsScroll">
-                
 
-            <ItemsControl ItemsSource="{Binding Students}" x:Name="StudentsItemsControl">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
 
-                        <Grid>
-                            <Border Background="White" Margin="5" CornerRadius="18" Height="40">
+                <ItemsControl ItemsSource="{Binding Students}" x:Name="StudentsItemsControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
 
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
-                                </Border.Effect>
+                            <Grid>
+                                <Border Background="White" Margin="5" CornerRadius="18" Height="40">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
 
-                            </Border>
+                                                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
+                                                </Setter.Value>
 
-                            <Border Margin="5" CornerRadius="18" Height="40" MouseDown="StudentData_MouseDown" >
+                                            </Setter>
 
-                                <Border.Background >
-                                    <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.5" />
-                                </Border.Background>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
 
-                                <Grid>
+                                                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.7" />
+                                                        </Setter.Value>
 
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="40" />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="50" />
-                                        <ColumnDefinition Width="40" />
-                                        <ColumnDefinition Width="30" />
-                                    </Grid.ColumnDefinitions>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
 
-                                    <Ellipse Grid.Column="0"  Margin="2" >
-                                        <Ellipse.Fill>
-                                            <SolidColorBrush Color="{Binding LabelColorDark}"/>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                    <TextBlock Text="{Binding Initial}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" >
-                                        <TextBlock.Foreground>
-                                            <SolidColorBrush Color="WhiteSmoke" Opacity="0.8"/>
-                                        </TextBlock.Foreground>
-                                    </TextBlock>
+                                        </Style>
+                                    </Border.Style>
 
-                                    <Grid Grid.Column="1">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30"/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" Margin="5,0" Grid.Row="0" Padding="0" VerticalAlignment="Center"/>
+                                </Border>
 
-                                        <Rectangle Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0" />
-                                        <Rectangle Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" />
+                                <Border Margin="5" CornerRadius="18" Height="40" MouseDown="StudentData_MouseDown" >
 
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="true">
+
+                                                <Setter Property="BorderBrush" >
+                                                    <Setter.Value >
+                                                        <SolidColorBrush Color="{Binding LabelColorDark}"/>
+                                                    </Setter.Value>
+                                                </Setter>
+
+                                                <Setter Property="BorderThickness" Value="0.5"/>
+
+                                                </DataTrigger>
+                                            </Style.Triggers>
+
+                                        </Style>
+                                    </Border.Style>
+
+                                    <Border.Background >
+                                        <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.5" />
+                                    </Border.Background>
+                                    
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="50" />
+                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition Width="30" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Ellipse Grid.Column="0"  Margin="2" >
+                                            <Ellipse.Fill>
+                                                <SolidColorBrush Color="{Binding LabelColorDark}"/>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                        <TextBlock Text="{Binding Initial}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" >
+                                            <TextBlock.Foreground>
+                                                <SolidColorBrush Color="WhiteSmoke" Opacity="0.8"/>
+                                            </TextBlock.Foreground>
+                                        </TextBlock>
+
+                                        <Grid Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="30"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" Margin="5,0" Grid.Row="0" Padding="0" VerticalAlignment="Center"/>
+
+                                            <Rectangle Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0" />
+                                            <Rectangle Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" />
+
+                                        </Grid>
+
+                                        <Image Grid.Column="2" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\trophy.png" Height="30" HorizontalAlignment="Right"/>
+
+                                        <TextBlock Text="{Binding Rank}" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,15,0" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16"/>
+
+                                        <Image Grid.Column="4" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\chevron.png" Height="30" HorizontalAlignment="Right" Opacity="0.5"/>
                                     </Grid>
 
-                                    <Image Grid.Column="2" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\trophy.png" Height="30" HorizontalAlignment="Right"/>
+                                </Border>
+                            </Grid>
 
-                                    <TextBlock Text="{Binding Rank}" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,15,0" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16"/>
-
-                                    <Image Grid.Column="4" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\chevron.png" Height="30" HorizontalAlignment="Right" Opacity="0.5"/>
-                                </Grid>
-
-                            </Border>
-                        </Grid>
-
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </ScrollViewer>
 
-            <Grid x:Name="SingleStudentDetailBorder" Visibility="Collapsed" Grid.Row="2" Margin="5" DataContext="{Binding Path=SelectedStudent}" >
+
+            <Border VerticalAlignment="Bottom" Margin="0,20" Grid.Row="2" Background="WhiteSmoke" Height="50" Width="350" CornerRadius="20" >
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Direction="0" Opacity="0.3" />
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="Add" Click="Add_Click" Style="{DynamicResource FloatBtn}" Margin="5" Grid.Column="0" Content="Add" />
+                    <Button x:Name="Remove" Click="Remove_Click" Style="{DynamicResource FloatBtn}"  Margin="5" Grid.Column="1" Content="Remove" />
+                    <Button x:Name="Edit" Click="Edit_Click" Style="{DynamicResource FloatBtn}"  Margin="5"  Grid.Column="2" Content="Edit" />
+                </Grid>
+
+            </Border>
+
+            <Grid x:Name="SingleStudentDetailBorder" Visibility="Visible" Grid.Row="2" Margin="5" DataContext="{Binding Path=SelectedStudent}" >
 
                 <Border CornerRadius="15" Background="White" >
                     <Border.Effect>
@@ -288,6 +452,7 @@
                             <TextBlock Text="Personal Info" Margin="12,0" FontSize="16" FontWeight="SemiBold" />
 
                             <StackPanel Margin="10,5" Grid.Column="0" Grid.Row="1">
+                                <TextBlock  Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}"  Text="Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBlock Text="Roll No : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBlock Text="Date of Birth : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
                                 <TextBlock Text="Father Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
@@ -298,13 +463,16 @@
 
 
                             <StackPanel  Margin="10,5" Grid.Column="1"  Grid.Row="1">
-                                <TextBlock Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
-                                <TextBlock Text="{Binding DateOfBirth}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
-                                <TextBlock Text="{Binding FatherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                                <TextBlock Text="{Binding MotherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                                <TextBlock Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                                <TextBlock Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBox Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
+                                <TextBox Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
+                                <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding DateOfBirth}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
+                                <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding FatherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding MotherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBox  Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
+
+                            <Button VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="Add" Height="40" Width="100" Style="{StaticResource FloatBtn}" Margin="10" x:Name="SingleAdd" Click="SingleAdd_Click"/>
                         </Grid>
 
                         <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
@@ -342,18 +510,18 @@
                                                         <StackPanel Grid.Column="1"  Orientation="Horizontal" HorizontalAlignment="Right">
 
                                                             <Grid HorizontalAlignment="Right" Margin="0,0,10,0">
-                                                            
-                                                        
-                                                            <Rectangle Width="100" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="LightGray" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
-                                                            <Rectangle Width="{Binding Percentage}" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="Green" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
+
+
+                                                                <Rectangle Width="100" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="LightGray" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
+                                                                <Rectangle Width="{Binding Percentage}" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="Green" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
 
                                                             </Grid>
-                                                            
+
                                                             <TextBlock Text="{Binding TotalScored}" FontSize="14" FontWeight="SemiBold"/>
                                                             <TextBlock Text=" / "  FontSize="14"  FontWeight="SemiBold"/>
                                                             <TextBlock Text="{Binding TotalMarks}"  FontSize="14"  FontWeight="SemiBold"/>
 
-                                                            
+
                                                         </StackPanel>
                                                     </Grid>
 
@@ -427,6 +595,7 @@
 
 
             </Grid>
+
         </Grid>
 
     </Grid>

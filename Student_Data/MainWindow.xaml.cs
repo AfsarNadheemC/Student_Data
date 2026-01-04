@@ -28,7 +28,7 @@ namespace Student_Data
 
         string ConnectionString = "Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;";
 
-        SqlConnection Connection = new SqlConnection("Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;"); 
+        SqlConnection Connection = new SqlConnection("Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;");
 
         public MainWindow()
         {
@@ -52,7 +52,7 @@ namespace Student_Data
 
             ObservableCollection<Student> Students = new ObservableCollection<Student>();
 
-            foreach  (DataRow v in rs)
+            foreach (DataRow v in rs)
             {
                 Students.Add(new Student(v.ItemArray));
             }
@@ -65,23 +65,45 @@ namespace Student_Data
         }
 
         private void StudentData_MouseDown(object sender, MouseButtonEventArgs e)
-        { 
+        {
+
+
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 if (sender is Border SelectedBorder)
                 {
-                    Point Point = SelectedBorder.TranslatePoint(new Point(0, 0), StudentsScroll);
+                    if (ViewModel.SelectedStudent == null)
+                    {
+                        Student SD = (sender as Border).DataContext as Student;
+                        ViewModel.SelectedStudent = SD;
+                        ViewModel.SelectedStudent.IsSelected = true;
+                    }
+                    else
+                    {
+                        Student SD = (sender as Border).DataContext as Student;
+                        if (SD.Equals(ViewModel.SelectedStudent))
+                        {
 
-                    ViewModel.FromMargin = new Thickness(50, Point.Y, 50, StudentsScroll.ActualHeight - (40 + Point.Y));
+                            Point Point = SelectedBorder.TranslatePoint(new Point(0, 0), StudentsScroll);
 
-                    SingleStudentDetailBorder.Visibility = Visibility.Visible;
-                    SingleStudentAni = this.Resources["SingleStudentAni"] as Storyboard;
-                    SingleStudentAni.Begin();
+                            ViewModel.FromMargin = new Thickness(50, Point.Y, 50, StudentsScroll.ActualHeight - (40 + Point.Y));
 
-                    ViewModel.SelectedStudent = (sender as Border).DataContext as Student;
+                            SingleStudentDetailBorder.Visibility = Visibility.Visible;
+                            SingleStudentAni = this.Resources["SingleStudentAni"] as Storyboard;
+                            SingleStudentAni.Begin();
 
-                    ViewModel.IsPersonalInfo = true;
+
+                            ViewModel.IsPersonalInfo = true;
+                            SD.IsSelected = true;
+                        }
+                        ViewModel.SelectedStudent.IsSelected = false;
+                        ViewModel.SelectedStudent = SD;
+                        ViewModel.SelectedStudent.IsSelected = true;
+
+                    }
+
+
                 }
 
 
@@ -97,6 +119,57 @@ namespace Student_Data
         {
             SingleStudentAni.Stop();
             SingleStudentDetailBorder.Margin = new Thickness(5);
+        }
+
+        private void Add_Click(object sender, RoutedEventArgs e)
+        {
+            SingleStudentDetailBorder.Visibility = Visibility.Visible;
+
+            if (ViewModel.SelectedStudent != null)
+            {
+                ViewModel.SelectedStudent.IsSelected = false;
+            }
+
+            ViewModel.SelectedStudent = ViewModel.SelectedStudent = new Student((int.Parse(ViewModel.Students.Last().RollNumber) + 1).ToString());
+        }
+
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SingleAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Student SD = SingleStudentDetailBorder.DataContext as Student;
+            ViewModel.Students.Add(SD);
+
+            string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @FullAddress, @Grade)";
+            SqlCommand cmd = new SqlCommand (sql, Connection);
+
+            Connection.Open();
+
+            cmd.Parameters.AddWithValue("RollNo" , SD.RollNumber);
+            cmd.Parameters.AddWithValue("FullName", SD.Name);
+            cmd.Parameters.AddWithValue("FatherName", SD.FatherName);
+            cmd.Parameters.AddWithValue("MotherName", SD.MotherName);
+            cmd.Parameters.AddWithValue("BloodGroup", SD.BloodGroup);
+            cmd.Parameters.AddWithValue("FullAddress", SD.Address);
+            cmd.Parameters.AddWithValue("Grade", ViewModel.Students.Last().Rank + 1);
+
+            if ( cmd.ExecuteNonQuery() > 0)
+            {
+                MessageBox.Show("Added");
+                ViewModel.SelectedStudent = new Student( (int.Parse ( ViewModel.Students.Last().RollNumber) + 1 ).ToString());
+            }
+
+
+            
+            Connection.Close();
         }
     }
 
@@ -132,7 +205,7 @@ namespace Student_Data
             set { myVar = value; }
         }
 
-        private bool _IsExaminations ;
+        private bool _IsExaminations;
 
         public bool IsExaminations
         {
@@ -181,7 +254,7 @@ namespace Student_Data
 
             Students.Clear();
 
-            for(int i = 0; i < TempStudents.Count; i++)
+            for (int i = 0; i < TempStudents.Count; i++)
             {
                 TempStudents[i].RollNumber = "SH5B" + (i + 1).ToString("D3");
 
@@ -199,10 +272,24 @@ namespace Student_Data
 
     }
 
-    public class Student
+    public class Student : INotifyPropertyChanged
     {
         public string Name { get; set; }
-        public string RollNumber { get; set; }
+        private string _RollNumber;
+
+        public string RollNumber
+        {
+            get 
+            { 
+                return _RollNumber; 
+            }
+            set 
+            { 
+                _RollNumber = value; 
+                OnPropertyChanged(nameof(RollNumber));
+            }
+        }
+
         public string Address { get; set; }
         public DateOnly DateOfBirth { get; set; }
         public ObservableCollection<Exam> Exams { get; set; }
@@ -222,6 +309,36 @@ namespace Student_Data
             }
         }
 
+        private bool _IsSelected;
+
+        public bool IsSelected
+        {
+            get
+            {
+                return _IsSelected;
+            }
+            set
+            {
+                _IsSelected = value; OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+
+        private bool _IsReadOnly;
+
+        public bool IsReadOnly
+        {
+            get { return _IsReadOnly; }
+            set { _IsReadOnly = value; OnPropertyChanged(nameof(IsReadOnly)); }
+        }
+
+        public Student(string RollNo)
+        {
+            RollNumber = RollNo;
+            IsReadOnly = false;
+
+            (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
+        }
+
         public Student(object[] Objects)
         {
             RollNumber = Objects[0] as string;
@@ -232,10 +349,11 @@ namespace Student_Data
             Address = Objects[5] as string;
 
 
+            IsReadOnly = true;
             (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
         }
 
-        public Student(string name, string address, DateOnly dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup, string fatherName , string motherName)
+        public Student(string name, string address, DateOnly dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup, string fatherName, string motherName)
         {
             Name = name;    //
             Address = address;  //
@@ -276,7 +394,15 @@ namespace Student_Data
             FatherName = fatherName;
             MotherName = motherName;
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string PropertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+        }
     }
+
 
 
     public class Exam
@@ -366,6 +492,18 @@ namespace Student_Data
         Exams
     }
 
+    public class InverseBoolToVis : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((bool)value) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 }
 
