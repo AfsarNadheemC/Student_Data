@@ -130,7 +130,16 @@ namespace Student_Data
                 ViewModel.SelectedStudent.IsSelected = false;
             }
 
-            ViewModel.SelectedStudent = ViewModel.SelectedStudent = new Student((int.Parse(ViewModel.Students.Last().RollNumber) + 1).ToString());
+            if (ViewModel.Students.Count > 0)
+            {
+                ViewModel.SelectedStudent = new Student(ViewModel.Students.Last().RollNumber + 1);
+            }
+            else
+            {
+                ViewModel.SelectedStudent = new Student(1);
+
+            }
+
 
             ViewModel.SingleText = "Add";
 
@@ -177,35 +186,6 @@ namespace Student_Data
                 ViewModel.Students.Add(SD);
 
                 string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @FullAddress, @Grade)";
-                SqlCommand cmd = new SqlCommand (sql, Connection);
-
-                Connection.Open();
-
-                cmd.Parameters.AddWithValue("@RollNo" , SD.RollNumber);
-                cmd.Parameters.AddWithValue("@FullName", SD.Name);
-                cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
-                cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
-                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
-                cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
-                cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
-
-                if ( cmd.ExecuteNonQuery() > 0)
-                {
-                    MessageBox.Show("Added");
-                    ViewModel.SelectedStudent = new Student( (int.Parse ( ViewModel.Students.Last().RollNumber) + 1 ).ToString());
-                }
-
-
-            
-                Connection.Close();
-
-            }
-            else
-            {
-                Student SD = SingleStudentDetailBorder.DataContext as Student;
-                ViewModel.Students.Add(SD);
-
-                string sql = "UPDATE INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @FullAddress, @Grade)";
                 SqlCommand cmd = new SqlCommand(sql, Connection);
 
                 Connection.Open();
@@ -221,7 +201,37 @@ namespace Student_Data
                 if (cmd.ExecuteNonQuery() > 0)
                 {
                     MessageBox.Show("Added");
-                    ViewModel.SelectedStudent = new Student((int.Parse(ViewModel.Students.Last().RollNumber) + 1).ToString());
+                    ViewModel.SelectedStudent = new Student(ViewModel.Students.Last().RollNumber + 1);
+                }
+
+
+
+                Connection.Close();
+
+            }
+            else
+            {
+                Student SD = SingleStudentDetailBorder.DataContext as Student;
+                ViewModel.Students.Add(SD);
+
+                string sql = "UPDATE Students SET FullName = @FullName , FatherName = @FatherName, MotherName = @MotherName , BloodGroup = @BloodGroup , DateOfBirth = @DateOfBirth , FullAddress = @FullAddress, Grade = @Grade WHERE RollNo = @RollNo";
+                SqlCommand cmd = new SqlCommand(sql, Connection);
+
+                Connection.Open();
+
+                cmd.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd.Parameters.AddWithValue("@FullName", SD.Name);
+                cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
+                cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
+                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
+                cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
+
+                if (cmd.ExecuteNonQuery() > 0)
+                {
+                    MessageBox.Show("Updated");
+                    //ViewModel.SelectedStudent = new Student((int.Parse(ViewModel.Students.Last().RollNumber) + 1).ToString());
                 }
 
 
@@ -324,7 +334,7 @@ namespace Student_Data
 
             for (int i = 0; i < TempStudents.Count; i++)
             {
-                TempStudents[i].RollNumber = "SH5B" + (i + 1).ToString("D3");
+                //TempStudents[i].RollNumber = "SH5B" + (i + 1).ToString("D3");
 
                 Students.Add(TempStudents[i]);
             }
@@ -343,24 +353,24 @@ namespace Student_Data
     public class Student : INotifyPropertyChanged
     {
         public string Name { get; set; }
-        private string _RollNumber;
+        private int _RollNumber;
 
-        public string RollNumber
+        public int RollNumber
         {
-            get 
-            { 
-                return _RollNumber; 
+            get
+            {
+                return _RollNumber;
             }
-            set 
-            { 
-                _RollNumber = value; 
+            set
+            {
+                _RollNumber = value;
                 OnPropertyChanged(nameof(RollNumber));
             }
         }
 
-        
+
         public string Address { get; set; }
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public ObservableCollection<Exam> Exams { get; set; }
         public string BloodGroup { get; set; }
         public float Percentage { get; set; }
@@ -400,7 +410,7 @@ namespace Student_Data
             set { _IsReadOnly = value; OnPropertyChanged(nameof(IsReadOnly)); }
         }
 
-        public Student(string RollNo)
+        public Student(int RollNo)
         {
             RollNumber = RollNo;
             IsReadOnly = false;
@@ -410,19 +420,28 @@ namespace Student_Data
 
         public Student(object[] Objects)
         {
-            RollNumber = Objects[0] as string;
+            if (Objects[0] is int RollNo)
+            {
+                RollNumber = RollNo;
+            }
             Name = Objects[1] as string;
             FatherName = Objects[2] as string;
             MotherName = Objects[3] as string;
             BloodGroup = Objects[4] as string;
-            Address = Objects[5] as string;
+
+            if (Objects[5] is DateTime DOB)
+            {
+                DateOfBirth = DOB;   
+            }
+
+            Address = Objects[6] as string;
 
 
             IsReadOnly = true;
             (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
         }
 
-        public Student(string name, string address, DateOnly dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup, string fatherName, string motherName)
+        public Student(string name, string address, DateTime dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup, string fatherName, string motherName)
         {
             Name = name;    //
             Address = address;  //

@@ -456,10 +456,10 @@
                             <StackPanel Margin="10,5" Grid.Column="0" Grid.Row="1">
                                 <TextBlock  Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}"  Text="Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBlock Text="Roll No : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
-                                <TextBlock Text="Date of Birth : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
                                 <TextBlock Text="Father Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Text="Mother Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Text="Blood Group : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBlock Text="Date of Birth : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Text="Address : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
 
@@ -467,10 +467,10 @@
                             <StackPanel  Margin="10,5" Grid.Column="1"  Grid.Row="1">
                                 <TextBox Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBox Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
-                                <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding DateOfBirth}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"   Margin="4"/>
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding FatherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding MotherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBox  Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+                                <TextBox  Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding DateOfBirth , StringFormat='dd-MM-yyyy'}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
 
