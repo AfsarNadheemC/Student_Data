@@ -73,15 +73,14 @@ namespace Student_Data
             {
                 if (sender is Border SelectedBorder)
                 {
+                    if (!(SelectedBorder.DataContext is Student SD)) return;
                     if (ViewModel.SelectedStudent == null)
                     {
-                        Student SD = (sender as Border).DataContext as Student;
                         ViewModel.SelectedStudent = SD;
                         ViewModel.SelectedStudent.IsSelected = true;
                     }
                     else
                     {
-                        Student SD = (sender as Border).DataContext as Student;
                         if (SD.Equals(ViewModel.SelectedStudent))
                         {
 
@@ -90,9 +89,12 @@ namespace Student_Data
                             ViewModel.FromMargin = new Thickness(50, Point.Y, 50, StudentsScroll.ActualHeight - (40 + Point.Y));
 
                             SingleStudentDetailBorder.Visibility = Visibility.Visible;
-                            SingleStudentAni = this.Resources["SingleStudentAni"] as Storyboard;
-                            SingleStudentAni.Begin();
 
+                            if (this.Resources["SingleStudentAni"] is Storyboard _Temp)
+                            {
+                                SingleStudentAni = _Temp;
+                                SingleStudentAni.Begin();
+                            }
 
                             ViewModel.IsPersonalInfo = true;
                             SD.IsSelected = true;
@@ -137,9 +139,9 @@ namespace Student_Data
             else
             {
                 ViewModel.SelectedStudent = new Student(1);
-
             }
 
+            NameTxt.Focus();
 
             ViewModel.SingleText = "Add";
 
@@ -179,13 +181,26 @@ namespace Student_Data
         private void SingleAdd_Click(object sender, RoutedEventArgs e)
         {
 
+            if (!(SingleStudentDetailBorder.DataContext is Student SD)) return;
+
+            //1 / 1 / 1753 12:00:00 AM and 12 / 31 / 9999 11:59:59 PM.'
+
+            if (SD.DateOfBirth < new DateTime(1753, 01, 01) || SD.DateOfBirth > new DateTime(9999, 12, 31))
+            {
+                MessageBox.Show("Invalid Date");
+            }
+
+            if ((SD.Name == null || SD.FatherName == null || SD.MotherName == null || SD.BloodGroup == null || SD.Address == null))
+            {
+                MessageBox.Show("Some Fields are Missing");
+                return;
+            }
+
             if (ViewModel.SingleText == "Add")
             {
                 //return;
-                Student SD = SingleStudentDetailBorder.DataContext as Student;
-                ViewModel.Students.Add(SD);
 
-                string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @FullAddress, @Grade)";
+                string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , DateOfBirth , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @DateOfBirth ,@FullAddress, @Grade)";
                 SqlCommand cmd = new SqlCommand(sql, Connection);
 
                 Connection.Open();
@@ -195,24 +210,37 @@ namespace Student_Data
                 cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
                 cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
                 cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd.Parameters.AddWithValue("@DateOfBirth", SD.DateOfBirth);
                 cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
-                cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
 
+                if (ViewModel.Students.Count > 0)
+                {
+                    cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@Grade", 1);
+                }
+
+
+                
                 if (cmd.ExecuteNonQuery() > 0)
                 {
                     MessageBox.Show("Added");
-                    ViewModel.SelectedStudent = new Student(ViewModel.Students.Last().RollNumber + 1);
+                    //ViewModel.SelectedStudent = new Student(ViewModel.Students.Last().RollNumber + 1);
+                    ViewModel.Students.Add(SD);
                 }
 
 
 
                 Connection.Close();
 
+                SingleStudentDetailBorder.Visibility = Visibility.Collapsed;
+
             }
             else
             {
-                Student SD = SingleStudentDetailBorder.DataContext as Student;
-                ViewModel.Students.Add(SD);
+                ViewModel.SelectedStudent = SD;
 
                 string sql = "UPDATE Students SET FullName = @FullName , FatherName = @FatherName, MotherName = @MotherName , BloodGroup = @BloodGroup , DateOfBirth = @DateOfBirth , FullAddress = @FullAddress, Grade = @Grade WHERE RollNo = @RollNo";
                 SqlCommand cmd = new SqlCommand(sql, Connection);
@@ -224,7 +252,7 @@ namespace Student_Data
                 cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
                 cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
                 cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
-                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd.Parameters.AddWithValue("@DateOfBirth", SD.DateOfBirth);
                 cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
                 cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
 
@@ -240,6 +268,7 @@ namespace Student_Data
             }
 
         }
+
     }
 
     public class ViewModel(ObservableCollection<Student> students) : INotifyPropertyChanged
@@ -431,7 +460,7 @@ namespace Student_Data
 
             if (Objects[5] is DateTime DOB)
             {
-                DateOfBirth = DOB;   
+                DateOfBirth = DOB;
             }
 
             Address = Objects[6] as string;
