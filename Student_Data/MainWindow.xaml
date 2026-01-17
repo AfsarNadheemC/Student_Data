@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Student_Data"
         mc:Ignorable="d"
-        Title="Student Data" Height="600" Width="400" d:DataContext="{d:DesignInstance Type=local:ViewModel }" Topmost="False">
+        Title="Student Data" Height="600" Width="400" d:DataContext="{d:DesignInstance Type=local:ViewModel }" Topmost="True">
 
 
     <Window.Resources>
@@ -395,18 +395,21 @@
             </Setter>
         </Style>
         
-        <SolidColorBrush x:Key="Add.Idael" Color="DarkGreen"/>
-        <SolidColorBrush x:Key="Add.Click" Color="DarkSeaGreen"/>
-        <SolidColorBrush x:Key="Add.Hover" Color="ForestGreen"/>
-        <SolidColorBrush x:Key="Add.HoverBG" Color="#ecfcfa"/>
+
+        <SolidColorBrush x:Key="Add.HoverBG" Color="#ccffd0" Opacity="0.5"/>
+        <SolidColorBrush x:Key="Add.HoverFore" Color="#047b46"/>
+        <SolidColorBrush x:Key="Add.IdealBG" Color="#ccffd0" Opacity="0.2"/>
+        <SolidColorBrush x:Key="Add.IdealFore" Color="#058c50"/>
+        <SolidColorBrush x:Key="Add.ClickFore" Color="#058c50" Opacity="0.7"/>
 
         <Style x:Key="AddButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual2}"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Add.Idael}"/>
-            <Setter Property="Foreground" Value="{StaticResource Add.Idael}"/>
+            <Setter Property="Background" Value="{StaticResource Add.IdealBG}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Add.IdealFore}"/>
+            <Setter Property="Foreground" Value="{StaticResource Add.IdealFore}"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="1"/>
@@ -419,15 +422,15 @@
                         <ControlTemplate.Triggers>
 
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Foreground" Value="{StaticResource Add.Hover}"/>
-                                <Setter Property="BorderBrush" Value="{StaticResource Add.Hover}"/>
                                 <Setter Property="Background" Value="{StaticResource Add.HoverBG}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Add.HoverFore}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource Add.HoverFore}"/>
                             </Trigger>
                             
 
                             <Trigger Property="IsPressed" Value="true">
-                                <Setter Property="Foreground" Value="{StaticResource Add.Click}"/>
-                                <Setter Property="BorderBrush" Value="{StaticResource Add.Click}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Add.ClickFore}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource Add.ClickFore}"/>
                             </Trigger>
                             
 
@@ -435,6 +438,145 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <SolidColorBrush x:Key="Remove.HoverBG" Color="#ffd6e7" Opacity="0.5"/>
+        <SolidColorBrush x:Key="Remove.HoverFore" Color="#e2026b"/>
+        <SolidColorBrush x:Key="Remove.IdealBG" Color="#ffd6e7" Opacity="0.2"/>
+        <SolidColorBrush x:Key="Remove.IdealFore" Color="#e2026b" Opacity="0.9"/>
+        <SolidColorBrush x:Key="Remove.ClickFore" Color="#e2026b" Opacity="0.5"/>
+
+        <Style x:Key="RemoveButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual2}"/>
+            <Setter Property="Background" Value="{StaticResource Remove.IdealBG}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Remove.IdealFore}"/>
+            <Setter Property="Foreground" Value="{StaticResource Remove.IdealFore}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true" CornerRadius="5">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{StaticResource Remove.HoverBG}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Remove.HoverFore}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource Remove.HoverFore}"/>
+                            </Trigger>
+                            
+
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Foreground" Value="{StaticResource Remove.ClickFore}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource Remove.ClickFore}"/>
+                            </Trigger>
+                            
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <SolidColorBrush x:Key="Edit.HoverBG" Color="#ffe1d6" Opacity="0.5"/>
+        <SolidColorBrush x:Key="Edit.HoverFore" Color="#cd4b26"/>
+        <SolidColorBrush x:Key="Edit.IdealBG" Color="#ffe1d6" Opacity="0.2"/>
+        <SolidColorBrush x:Key="Edit.IdealFore" Color="#cd4b26" Opacity="0.9"/>
+        <SolidColorBrush x:Key="Edit.ClickFore" Color="#cd4b26" Opacity="0.5"/>
+
+        <Style x:Key="EditButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual2}"/>
+            <Setter Property="Background" Value="{StaticResource Edit.IdealBG}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Edit.IdealFore}"/>
+            <Setter Property="Foreground" Value="{StaticResource Edit.IdealFore}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true" CornerRadius="5">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{StaticResource Edit.HoverBG}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Edit.HoverFore}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource Edit.HoverFore}"/>
+                            </Trigger>
+                            
+
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Foreground" Value="{StaticResource Edit.ClickFore}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource Edit.ClickFore}"/>
+                            </Trigger>
+                            
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <SolidColorBrush x:Key="TextBox.Static.Border1" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border1" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border1" Color="#FF569DE5"/>
+        
+        <Style x:Key="SearchText" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border1}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Padding" Value="10,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="10" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.MouseOver.Border1}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border1}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
         </Style>
 
     </Window.Resources>
@@ -458,7 +600,9 @@
 
             <Rectangle Fill="#dddddd" Height="2" Margin="-5,0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" />
 
-            <TextBlock Text="{Binding TeacherName}" FontFamily="Cambria"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>
+            <TextBox Style="{DynamicResource SearchText}" Grid.Row="1" HorizontalAlignment="Left" Width="200" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" />
+
+            <!--<TextBlock Text="{Binding TeacherName}" FontFamily="Cambria"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>-->
 
             <Grid Background="Transparent" HorizontalAlignment="Right" Grid.Row="1" >
 
@@ -470,7 +614,7 @@
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" x:Name="StudentsScroll">
 
 
-                <ItemsControl ItemsSource="{Binding Students}" x:Name="StudentsItemsControl">
+                <ItemsControl ItemsSource="{Binding Students}" x:Name="StudentsItemsControl" Margin="0,0,0,60">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
 
@@ -580,6 +724,7 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
+                
             </ScrollViewer>
 
 
@@ -597,8 +742,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Style="{DynamicResource AddButtonStyle}" x:Name="Add" Click="Add_Click" Margin="5" Grid.Column="0" Content="Add" />
-                    <Button x:Name="Remove" Click="Remove_Click" Style="{DynamicResource FloatBtn}"  Margin="5" Grid.Column="1" Content="Remove" />
-                    <Button x:Name="Edit" Click="Edit_Click" Style="{DynamicResource FloatBtn}"  Margin="5"  Grid.Column="2" Content="Edit" />
+                    <Button x:Name="Remove" Click="Remove_Click" Style="{DynamicResource RemoveButtonStyle}"  Margin="5" Grid.Column="1" Content="Remove" />
+                    <Button x:Name="Edit" Click="Edit_Click" Style="{DynamicResource EditButtonStyle}"  Margin="5"  Grid.Column="2" Content="Edit" />
                 </Grid>
 
             </Border>
@@ -685,7 +830,7 @@
                                 <TextBox  Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBox  Style="{DynamicResource TextBoxStyle1}"  Visibility="{Binding IsReadOnly , Converter={StaticResource BtoV}}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding DateOfBirth , StringFormat='dd-MM-yyyy'}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
 
-                                <DatePicker Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" Style="{StaticResource DatePickerStyle1}" SelectedDate="{Binding DateOfBirth, StringFormat='dd-MM-yyyy'}"  FontSize="14" FontWeight="SemiBold" Opacity="0.7" />
+                                <DatePicker Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" Style="{StaticResource DatePickerStyle1}" SelectedDate="{Binding DateOfBirth, StringFormat='dd-MM-yyyy'}" DisplayDateStart="01-01-2002" FontSize="14" FontWeight="SemiBold" Opacity="0.7" />
 
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
@@ -748,7 +893,7 @@
                             </Button>
                         </Grid>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
+                        <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
 
                             <StackPanel >
 

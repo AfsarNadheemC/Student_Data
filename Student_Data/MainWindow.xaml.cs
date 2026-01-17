@@ -34,27 +34,44 @@ namespace Student_Data
         {
             InitializeComponent();
 
-            string sql = "Select * from Students";
-
-            SqlCommand cmd = new SqlCommand(sql, Connection);
-
             Connection.Open();
 
-            SqlDataReader reader = cmd.ExecuteReader();
+            string StudentSql = "Select * from Students";
 
-            DataTable dt = new DataTable();
+            SqlCommand StudentCmd = new SqlCommand(StudentSql, Connection);            
 
-            dt.Load(reader);
+            SqlDataReader StudentReader = StudentCmd.ExecuteReader();
+
+            DataTable StudentDt = new DataTable();
+
+            StudentDt.Load(StudentReader);
+
+            var StudentRows = StudentDt.Rows;
+
+
+            string Internal1Sql = "Select * from Internal1";
+
+            SqlCommand Internal1Cmd = new SqlCommand(Internal1Sql, Connection);
+
+            SqlDataReader Internal1Reader = Internal1Cmd.ExecuteReader();
+
+            DataTable Internal1Dt = new DataTable();
+
+            Internal1Dt.Load(Internal1Reader);
+
+            var Internal1Rows = Internal1Dt.Rows;
 
             Connection.Close();
 
-            var rs = dt.Rows;
-
             ObservableCollection<Student> Students = new ObservableCollection<Student>();
 
-            foreach (DataRow v in rs)
+            for (int i =0; i <  StudentRows.Count; i++)
             {
-                Students.Add(new Student(v.ItemArray));
+               var Student =  StudentRows[i];
+               var Internal1 = Internal1Rows[i];
+
+
+                Students.Add(new Student(Student.ItemArray , Internal1.ItemArray));
             }
 
             ViewModel = new ViewModel(Students);
@@ -115,6 +132,12 @@ namespace Student_Data
         private void Close_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SingleStudentDetailBorder.Visibility = Visibility.Collapsed;
+
+            if (!ViewModel.SelectedStudent.IsReadOnly)
+            {
+                ViewModel.SelectedStudent.IsReadOnly = true;
+            }
+
         }
 
         private void SingleStudentAni_Completed(object sender, EventArgs e)
@@ -149,33 +172,43 @@ namespace Student_Data
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            string sql = "DELETE FROM Students WHERE RollNo = @RollNo";
 
-            SqlCommand cmd = new SqlCommand(sql, Connection);
-
-            Connection.Open();
-
-            cmd.Parameters.AddWithValue("RollNo", ViewModel.SelectedStudent.RollNumber);
-
-            if (cmd.ExecuteNonQuery() > 0)
+            if (ViewModel.SelectedStudent != null)
             {
-                ViewModel.Students.Remove(ViewModel.SelectedStudent);
+
+                string sql = "DELETE FROM Students WHERE RollNo = @RollNo";
+
+                SqlCommand cmd = new SqlCommand(sql, Connection);
+
+                Connection.Open();
+
+                cmd.Parameters.AddWithValue("RollNo", ViewModel.SelectedStudent.RollNumber);
+
+                if (cmd.ExecuteNonQuery() > 0)
+                {
+                    ViewModel.Students.Remove(ViewModel.SelectedStudent);
+                }
+
+
+
+                Connection.Close();
+
             }
-
-
-
-            Connection.Close();
 
 
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            SingleStudentDetailBorder.Visibility = Visibility.Visible;
+            if (ViewModel.SelectedStudent != null)
+            {
 
-            ViewModel.SelectedStudent.IsReadOnly = false;
+                SingleStudentDetailBorder.Visibility = Visibility.Visible;
 
-            ViewModel.SingleText = "Update";
+                ViewModel.SelectedStudent.IsReadOnly = false;
+
+                ViewModel.SingleText = "Update";
+            }
         }
 
         private void SingleAdd_Click(object sender, RoutedEventArgs e)
@@ -188,6 +221,7 @@ namespace Student_Data
             if (SD.DateOfBirth < new DateTime(1753, 01, 01) || SD.DateOfBirth > new DateTime(9999, 12, 31))
             {
                 MessageBox.Show("Invalid Date");
+                return;
             }
 
             if ((SD.Name == null || SD.FatherName == null || SD.MotherName == null || SD.BloodGroup == null || SD.Address == null))
@@ -223,7 +257,7 @@ namespace Student_Data
                 }
 
 
-                
+
                 if (cmd.ExecuteNonQuery() > 0)
                 {
                     MessageBox.Show("Added");
@@ -240,6 +274,8 @@ namespace Student_Data
             }
             else
             {
+                SD.IsReadOnly = true;
+
                 ViewModel.SelectedStudent = SD;
 
                 string sql = "UPDATE Students SET FullName = @FullName , FatherName = @FatherName, MotherName = @MotherName , BloodGroup = @BloodGroup , DateOfBirth = @DateOfBirth , FullAddress = @FullAddress, Grade = @Grade WHERE RollNo = @RollNo";
@@ -269,6 +305,20 @@ namespace Student_Data
 
         }
 
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string Search = SearchTextBox.Text;
+
+            if (string.IsNullOrWhiteSpace(Search))
+            {
+                StudentsItemsControl.ItemsSource = ViewModel.Students;
+            }
+            else
+            {
+                StudentsItemsControl.ItemsSource = ViewModel.Students.Where(a => a.Name.IndexOf(Search, StringComparison.OrdinalIgnoreCase) > -1);
+            }
+        }
     }
 
     public class ViewModel(ObservableCollection<Student> students) : INotifyPropertyChanged
@@ -442,6 +492,7 @@ namespace Student_Data
         public Student(int RollNo)
         {
             RollNumber = RollNo;
+            DateOfBirth = new DateTime(2002, 1, 1);
             IsReadOnly = false;
 
             (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
@@ -465,6 +516,33 @@ namespace Student_Data
 
             Address = Objects[6] as string;
 
+
+            IsReadOnly = true;
+            (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
+        }
+
+        public Student(object[] StudentObjects , object[] Internal1Objects)
+        {
+            if (StudentObjects[0] is int RollNo)
+            {
+                RollNumber = RollNo;
+            }
+            Name = StudentObjects[1] as string;
+            FatherName = StudentObjects[2] as string;
+            MotherName = StudentObjects[3] as string;
+            BloodGroup = StudentObjects[4] as string;
+
+            if (StudentObjects[5] is DateTime DOB)
+            {
+                DateOfBirth = DOB;
+            }
+
+            Address = StudentObjects[6] as string;
+
+            Exams =
+            [
+                new Exam ("Internal" , "01/01/2002" ,(int?) Internal1Objects[0] ,(int?)  Internal1Objects[1] , (int?) Internal1Objects[2] , (int?) Internal1Objects[3] ,  (int?)Internal1Objects[4] )
+            ];
 
             IsReadOnly = true;
             (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
@@ -526,15 +604,15 @@ namespace Student_Data
     {
         public string Name { get; set; }
         public string Date { get; set; }
-        public int Language1 { get; set; }
-        public int Language2 { get; set; }
-        public int Maths { get; set; }
-        public int Science { get; set; }
-        public int SocialStudies { get; set; }
+        public int? Language1 { get; set; }
+        public int? Language2 { get; set; }
+        public int? Maths { get; set; }
+        public int? Science { get; set; }
+        public int? SocialStudies { get; set; }
         public int TotalScored { get; set; }
         public int TotalMarks { get; set; }
 
-        public Exam(string name, string date, int language1, int language2, int maths, int science, int socialStudies)
+        public Exam(string name, string date, int? language1, int? language2, int? maths, int? science, int? socialStudies)
         {
             Name = name;
             Date = date;
@@ -543,7 +621,7 @@ namespace Student_Data
             Maths = maths;
             Science = science;
             SocialStudies = socialStudies;
-            TotalScored = language1 + language2 + maths + science + socialStudies;
+            TotalScored = (int) (language1 + language2 + maths + science + socialStudies);
             TotalMarks = 500;
         }
 
