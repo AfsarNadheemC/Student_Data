@@ -36,9 +36,38 @@ namespace Student_Data
 
             Connection.Open();
 
-            string StudentSql = "Select * from Students";
+            var StudentRows = GetDataRowCollection("Students");
+            var Internal1Rows = GetDataRowCollection("Internal1");
+            var Internal2Rows = GetDataRowCollection("Internal2");
+            var Internal3Rows = GetDataRowCollection("Internal3");
+            var Term1Rows = GetDataRowCollection("Term1");
+            var Term2Rows = GetDataRowCollection("Term2");
+            var Term3Rows = GetDataRowCollection("Term3");
 
-            SqlCommand StudentCmd = new SqlCommand(StudentSql, Connection);            
+            Connection.Close();
+
+            ObservableCollection<Student> Students = new ObservableCollection<Student>();
+
+            for (int i = 0; i < StudentRows.Count; i++)
+            {
+                var Student = StudentRows[i];
+
+                Students.Add(new Student(StudentRows[i].ItemArray, Internal1Rows[i].ItemArray, Term1Rows[i].ItemArray, Internal2Rows[i].ItemArray, Term2Rows[i].ItemArray, Internal3Rows[i].ItemArray, Term3Rows[i].ItemArray));
+            }
+
+            ViewModel = new ViewModel(Students);
+
+            this.DataContext = ViewModel;
+
+
+        }
+
+        public DataRowCollection GetDataRowCollection(string TableName)
+        {
+
+            string StudentSql = $"Select * from {TableName}";
+
+            SqlCommand StudentCmd = new SqlCommand(StudentSql, Connection);
 
             SqlDataReader StudentReader = StudentCmd.ExecuteReader();
 
@@ -46,38 +75,7 @@ namespace Student_Data
 
             StudentDt.Load(StudentReader);
 
-            var StudentRows = StudentDt.Rows;
-
-
-            string Internal1Sql = "Select * from Internal1";
-
-            SqlCommand Internal1Cmd = new SqlCommand(Internal1Sql, Connection);
-
-            SqlDataReader Internal1Reader = Internal1Cmd.ExecuteReader();
-
-            DataTable Internal1Dt = new DataTable();
-
-            Internal1Dt.Load(Internal1Reader);
-
-            var Internal1Rows = Internal1Dt.Rows;
-
-            Connection.Close();
-
-            ObservableCollection<Student> Students = new ObservableCollection<Student>();
-
-            for (int i =0; i <  StudentRows.Count; i++)
-            {
-               var Student =  StudentRows[i];
-               var Internal1 = Internal1Rows[i];
-
-
-                Students.Add(new Student(Student.ItemArray , Internal1.ItemArray));
-            }
-
-            ViewModel = new ViewModel(Students);
-
-            this.DataContext = ViewModel;
-
+            return StudentDt.Rows;
 
         }
 
@@ -521,7 +519,7 @@ namespace Student_Data
             (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
         }
 
-        public Student(object[] StudentObjects , object[] Internal1Objects)
+        public Student(object[] StudentObjects, object[] Internal1Objects, object[] Term1Objects, object[] Internal2Objects, object[] Term2Objects, object[] Internal3Objects, object[] Term3Objects)
         {
             if (StudentObjects[0] is int RollNo)
             {
@@ -540,8 +538,18 @@ namespace Student_Data
             Address = StudentObjects[6] as string;
 
             Exams =
+
             [
-                new Exam ("Internal" , "01/01/2002" ,(int?) Internal1Objects[0] ,(int?)  Internal1Objects[1] , (int?) Internal1Objects[2] , (int?) Internal1Objects[3] ,  (int?)Internal1Objects[4] )
+
+                new Exam ("Internal1" , "10/07/2015" ,(int?) Internal1Objects[0] ,(int?)  Internal1Objects[1] , (int?) Internal1Objects[2] , (int?) Internal1Objects[3] ,  (int?)Internal1Objects[4] ),
+                new Exam ("Term1" , "29/08/2015" ,(int?) Term1Objects[0] ,(int?)  Term1Objects[1] , (int?) Term1Objects[2] , (int?) Term1Objects[3] ,  (int?)Term1Objects[4] ),
+
+                new Exam ("Internal2" , "01/11/2015" ,(int?) Internal2Objects[0] ,(int?)  Internal2Objects[1] , (int?) Internal2Objects[2] , (int?) Internal2Objects[3] ,  (int?)Internal2Objects[4] ),
+                new Exam ("Term2" , "15/12/2015" ,(int?) Term2Objects[0] ,(int?)  Term2Objects[1] , (int?) Term2Objects[2] , (int?) Term2Objects[3] ,  (int?)Term2Objects[4] ),
+
+                new Exam ("Internal3" , "20/02/2015" ,(int?) Internal3Objects[0] ,(int?)  Internal3Objects[1] , (int?) Internal3Objects[2] , (int?) Internal3Objects[3] ,  (int?)Internal3Objects[4] ),
+                new Exam ("Term3" , "10/04/2015" ,(int?) Term3Objects[0] ,(int?)  Term3Objects[1] , (int?) Term3Objects[2] , (int?) Term3Objects[3] ,  (int?)Term3Objects[4] ),
+
             ];
 
             IsReadOnly = true;
@@ -621,7 +629,7 @@ namespace Student_Data
             Maths = maths;
             Science = science;
             SocialStudies = socialStudies;
-            TotalScored = (int) (language1 + language2 + maths + science + socialStudies);
+            TotalScored = (int)(language1 + language2 + maths + science + socialStudies);
             TotalMarks = 500;
         }
 

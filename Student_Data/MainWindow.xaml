@@ -131,7 +131,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
         <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
         <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
@@ -225,7 +225,7 @@
                 </MultiTrigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="DatePickerStyle1" TargetType="{x:Type DatePicker}">
             <Setter Property="Foreground" Value="#FF333333"/>
             <Setter Property="IsTodayHighlighted" Value="True"/>
@@ -384,7 +384,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="FocusVisual2">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -394,7 +394,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
 
         <SolidColorBrush x:Key="Add.HoverBG" Color="#ccffd0" Opacity="0.5"/>
         <SolidColorBrush x:Key="Add.HoverFore" Color="#047b46"/>
@@ -426,13 +426,13 @@
                                 <Setter Property="Foreground" Value="{StaticResource Add.HoverFore}"/>
                                 <Setter Property="BorderBrush" Value="{StaticResource Add.HoverFore}"/>
                             </Trigger>
-                            
+
 
                             <Trigger Property="IsPressed" Value="true">
                                 <Setter Property="Foreground" Value="{StaticResource Add.ClickFore}"/>
                                 <Setter Property="BorderBrush" Value="{StaticResource Add.ClickFore}"/>
                             </Trigger>
-                            
+
 
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -470,13 +470,13 @@
                                 <Setter Property="Foreground" Value="{StaticResource Remove.HoverFore}"/>
                                 <Setter Property="BorderBrush" Value="{StaticResource Remove.HoverFore}"/>
                             </Trigger>
-                            
+
 
                             <Trigger Property="IsPressed" Value="true">
                                 <Setter Property="Foreground" Value="{StaticResource Remove.ClickFore}"/>
                                 <Setter Property="BorderBrush" Value="{StaticResource Remove.ClickFore}"/>
                             </Trigger>
-                            
+
 
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -514,24 +514,24 @@
                                 <Setter Property="Foreground" Value="{StaticResource Edit.HoverFore}"/>
                                 <Setter Property="BorderBrush" Value="{StaticResource Edit.HoverFore}"/>
                             </Trigger>
-                            
+
 
                             <Trigger Property="IsPressed" Value="true">
                                 <Setter Property="Foreground" Value="{StaticResource Edit.ClickFore}"/>
                                 <Setter Property="BorderBrush" Value="{StaticResource Edit.ClickFore}"/>
                             </Trigger>
-                            
+
 
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <SolidColorBrush x:Key="TextBox.Static.Border1" Color="#FFABAdB3"/>
         <SolidColorBrush x:Key="TextBox.MouseOver.Border1" Color="#FF7EB4EA"/>
         <SolidColorBrush x:Key="TextBox.Focus.Border1" Color="#FF569DE5"/>
-        
+
         <Style x:Key="SearchText" TargetType="{x:Type TextBox}">
             <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
             <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border1}"/>
@@ -552,8 +552,12 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TextBox}">
                         <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="10" SnapsToDevicePixels="True">
-                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                <TextBlock Padding="{TemplateBinding Padding}" VerticalAlignment="Center" Visibility="Collapsed" x:Name="PlaceHolder" Text="{TemplateBinding Tag}" FontSize="{TemplateBinding FontSize}" Opacity="0.6" />
+                            </Grid>
                         </Border>
+
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Opacity" TargetName="border" Value="0.56"/>
@@ -564,6 +568,15 @@
                             <Trigger Property="IsKeyboardFocused" Value="true">
                                 <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border1}"/>
                             </Trigger>
+                            
+                            <Trigger Property="Text" Value="">
+                                <Setter Property="Visibility" Value="Visible" TargetName="PlaceHolder"/>
+                            </Trigger>
+
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" TargetName="PlaceHolder"/>                                
+                            </Trigger>
+                            
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -600,7 +613,7 @@
 
             <Rectangle Fill="#dddddd" Height="2" Margin="-5,0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" />
 
-            <TextBox Style="{DynamicResource SearchText}" Grid.Row="1" HorizontalAlignment="Left" Width="200" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" />
+            <TextBox Style="{DynamicResource SearchText}" Tag="Search by Name" Grid.Row="1" HorizontalAlignment="Left" Width="200" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" />
 
             <!--<TextBlock Text="{Binding TeacherName}" FontFamily="Cambria"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>-->
 
@@ -655,13 +668,13 @@
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected}" Value="true">
 
-                                                <Setter Property="BorderBrush" >
-                                                    <Setter.Value >
-                                                        <SolidColorBrush Color="{Binding LabelColorDark}"/>
-                                                    </Setter.Value>
-                                                </Setter>
+                                                    <Setter Property="BorderBrush" >
+                                                        <Setter.Value >
+                                                            <SolidColorBrush Color="{Binding LabelColorDark}"/>
+                                                        </Setter.Value>
+                                                    </Setter>
 
-                                                <Setter Property="BorderThickness" Value="0.5"/>
+                                                    <Setter Property="BorderThickness" Value="0.5"/>
 
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -672,7 +685,7 @@
                                     <Border.Background >
                                         <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.5" />
                                     </Border.Background>
-                                    
+
                                     <Grid>
 
                                         <Grid.ColumnDefinitions>
@@ -724,7 +737,7 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-                
+
             </ScrollViewer>
 
 
@@ -837,56 +850,56 @@
 
                             <Button Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding DataContext.SingleText , RelativeSource={RelativeSource AncestorType=Window}}" Height="40" Width="100" Margin="10" x:Name="SingleAdd" Click="SingleAdd_Click" >
                                 <Button.Style>
-                                    
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual1}"/>
-                                    <Setter Property="Background" Value="Transparent"/>
+
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual1}"/>
+                                        <Setter Property="Background" Value="Transparent"/>
                                         <Setter Property="BorderBrush" >
                                             <Setter.Value>
                                                 <SolidColorBrush Color="{Binding LabelColorDark}" />
                                             </Setter.Value>
                                         </Setter>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="BorderThickness" Value="2"/>
-                                    <Setter Property="FontSize" Value="15"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="BorderThickness" Value="2"/>
+                                        <Setter Property="FontSize" Value="15"/>
                                         <Setter Property="Foreground" >
                                             <Setter.Value>
                                                 <SolidColorBrush Color="{Binding LabelColorDark}" />
                                             </Setter.Value>
                                         </Setter>
-                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="1"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="1"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
 
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border CornerRadius="15" x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
-                                                    <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border CornerRadius="15" x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                                                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
 
-                                                    <Trigger Property="IsMouseOver" Value="true">
+                                                        <Trigger Property="IsMouseOver" Value="true">
                                                             <Setter Property="Background" TargetName="border" >
                                                                 <Setter.Value >
                                                                     <SolidColorBrush Color="{Binding LabelColorDim}" />
                                                                 </Setter.Value>
                                                             </Setter>
-                                                    </Trigger>
+                                                        </Trigger>
 
-                                                    <Trigger Property="IsPressed" Value="true">
+                                                        <Trigger Property="IsPressed" Value="true">
                                                             <Setter Property="Background" TargetName="border" >
                                                                 <Setter.Value >
                                                                     <SolidColorBrush Color="{Binding LabelColorDim}" Opacity="0.5" />
                                                                 </Setter.Value>
                                                             </Setter>
-                                                    </Trigger>
+                                                        </Trigger>
 
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
 
 
                                 </Button.Style>
