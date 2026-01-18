@@ -551,7 +551,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TextBox}">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="10" SnapsToDevicePixels="True">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="True">
                             <Grid>
                                 <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                                 <TextBlock Padding="{TemplateBinding Padding}" VerticalAlignment="Center" Visibility="Collapsed" x:Name="PlaceHolder" Text="{TemplateBinding Tag}" FontSize="{TemplateBinding FontSize}" Opacity="0.6" />
@@ -613,7 +613,7 @@
 
             <Rectangle Fill="#dddddd" Height="2" Margin="-5,0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" />
 
-            <TextBox Style="{DynamicResource SearchText}" Tag="Search by Name" Grid.Row="1" HorizontalAlignment="Left" Width="200" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" />
+            <TextBox Style="{DynamicResource SearchText}" Tag="Search by Name" Grid.Row="1" HorizontalAlignment="Left" Width="200" Margin="5,0,0,0" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" />
 
             <!--<TextBlock Text="{Binding TeacherName}" FontFamily="Cambria"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>-->
 
@@ -940,7 +940,7 @@
 
                                                         <StackPanel Grid.Column="1"  Orientation="Horizontal" HorizontalAlignment="Right">
 
-                                                            <Grid HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                            <Grid HorizontalAlignment="Right" Margin="0,0,5,0">
 
 
                                                                 <Rectangle Width="100" Height="5" RadiusX="2.5" RadiusY="2.5" Fill="LightGray" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0" Grid.Column="1" />
@@ -948,11 +948,13 @@
 
                                                             </Grid>
 
-                                                            <TextBlock Text="{Binding TotalScored}" FontSize="14" FontWeight="SemiBold"/>
-                                                            <TextBlock Text=" / "  FontSize="14"  FontWeight="SemiBold"/>
-                                                            <TextBlock Text="{Binding TotalMarks}"  FontSize="14"  FontWeight="SemiBold"/>
+                                                            <TextBlock  FontSize="14" FontWeight="SemiBold" Width="60" TextAlignment="Right" >
+                                                                <Run Text="{Binding TotalScored , Mode=OneWay}" />
+                                                                <Run Text="/" />
+                                                                <Run Text="{Binding TotalMarks , Mode=OneWay}" />
+                                                            </TextBlock>
 
-
+                                
                                                         </StackPanel>
                                                     </Grid>
 
@@ -978,11 +980,11 @@
                                                         <TextBlock Text="Sceince" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Column="3"/>
                                                         <TextBlock Text="Social" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="14"  Grid.Column="4"/>
 
-                                                        <TextBlock Text="{Binding Language1}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"  Grid.Column="0"/>
-                                                        <TextBlock Text="{Binding Language2}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"   Grid.Column="1"/>
-                                                        <TextBlock Text="{Binding Maths}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="2"/>
-                                                        <TextBlock Text="{Binding Science}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="3"/>
-                                                        <TextBlock Text="{Binding SocialStudies}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="14"  Grid.Row="1" Grid.Column="4"/>
+                                                        <TextBox Background="Transparent" IsReadOnly="{Binding DataContext.IsReadOnly , RelativeSource={RelativeSource AncestorType=StackPanel}}" BorderThickness="0,0,0,1" Text="{Binding Language1}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"  Grid.Column="0"/>
+                                                        <TextBox Background="Transparent" IsReadOnly="{Binding DataContext.IsReadOnly , RelativeSource={RelativeSource AncestorType=StackPanel}}"   BorderThickness="0,0,0,1" Text="{Binding Language2}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Grid.Row="1"   Grid.Column="1"/>
+                                                        <TextBox Background="Transparent"  IsReadOnly="{Binding DataContext.IsReadOnly , RelativeSource={RelativeSource AncestorType=StackPanel}}"  BorderThickness="0,0,0,1" Text="{Binding Maths}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="2"/>
+                                                        <TextBox Background="Transparent"  IsReadOnly="{Binding DataContext.IsReadOnly , RelativeSource={RelativeSource AncestorType=StackPanel}}" BorderThickness="0,0,0,1"  Text="{Binding Science}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  Grid.Row="1"  Grid.Column="3"/>
+                                                        <TextBox Background="Transparent" IsReadOnly="{Binding DataContext.IsReadOnly , RelativeSource={RelativeSource AncestorType=StackPanel}}"  BorderThickness="0,0,0,1" Text="{Binding SocialStudies}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="14"  Grid.Row="1" Grid.Column="4"/>
 
                                                     </Grid>
                                                 </Grid>
