@@ -266,7 +266,7 @@ namespace Student_Data
             {
                 //return;
 
-                string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , DateOfBirth , FullAddress, Grade) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @DateOfBirth ,@FullAddress, @Grade)";
+                string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , DateOfBirth , FullAddress) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @DateOfBirth ,@FullAddress)";
                 SqlCommand cmd = new SqlCommand(sql, Connection);
 
                 Connection.Open();
@@ -336,6 +336,11 @@ namespace Student_Data
 
         }
 
+        private void AddExams()
+        {
+
+        }
+
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -349,6 +354,43 @@ namespace Student_Data
             {
                 StudentsItemsControl.ItemsSource = ViewModel.Students.Where(a => a.Name.IndexOf(Search, StringComparison.OrdinalIgnoreCase) > -1);
             }
+        }
+
+        private void Login_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (string.IsNullOrWhiteSpace(ViewModel.UserName) || string.IsNullOrWhiteSpace(ViewModel.Password))
+            {
+                return;
+            }
+
+            Connection.Open();
+
+            var v = GetDataRowCollection("UserInfo");
+
+            string sql = "SELECT * FROM UserInfo where UserName = @UserName AND Password = @Password";
+            SqlCommand sqlCommand = new SqlCommand(sql, Connection);
+
+            sqlCommand.Parameters.AddWithValue("@UserName", ViewModel.UserName);
+            sqlCommand.Parameters.AddWithValue("@Password", ViewModel.Password);
+
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            DataTable dataTable = new DataTable();
+            dataTable.Load(sqlDataReader);
+
+            if (dataTable.Rows.Count == 0)
+            {
+                MessageBox.Show("Invalid UserName or Password");
+                return;
+            }
+            else
+            {
+                LoginPage.Visibility = Visibility.Collapsed;
+            }
+
+
+
+            Connection.Close();
         }
     }
 
@@ -424,6 +466,21 @@ namespace Student_Data
         }
 
 
+        private string _UserName;
+
+        public string UserName
+        {
+            get { return _UserName; }
+            set { _UserName = value; OnPropertyChanged(nameof(UserName)); }
+        }
+
+        private string _Password;
+
+        public string Password
+        {
+            get { return _Password; }
+            set { _Password = value; OnPropertyChanged(nameof(Password)); }
+        }
 
         public void SetRollNumber()
         {
@@ -678,7 +735,7 @@ namespace Student_Data
             get { return _Language1; }
             set
             {
-                if(value >= 0 && value <= 100) { _Language1 = value; }
+                if (value >= 0 && value <= 100) { _Language1 = value; }
                 OnPropertyChanged(nameof(Language1)); OnPropertyChanged(nameof(TotalScored)); OnPropertyChanged(nameof(Percentage));
             }
         }
