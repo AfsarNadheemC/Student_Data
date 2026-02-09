@@ -392,6 +392,33 @@ namespace Student_Data
 
             Connection.Close();
         }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+
+
+        }
+
+        private void PasswordBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            PasswordBox passwordBox = sender as PasswordBox;
+
+            if ( passwordBox.Password.Length == 0)
+            {
+                passwordBox.Tag = "Password";
+            }
+            else
+            {
+                passwordBox.Tag = "";
+            }
+
+        }
+
+        private void PasswordBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            PasswordBox passwordBox = sender as PasswordBox;
+            passwordBox.Tag = "";
+        }
     }
 
     public class ViewModel(ObservableCollection<Student> students) : INotifyPropertyChanged

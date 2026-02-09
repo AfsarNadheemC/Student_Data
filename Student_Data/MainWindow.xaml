@@ -627,6 +627,9 @@
             <Setter Property="AllowDrop" Value="true"/>
             <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
             <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <EventSetter Event="PasswordChanged" Handler="PasswordBox_PasswordChanged"/>
+            <EventSetter Event="LostFocus" Handler="PasswordBox_LostFocus"/>
+            <EventSetter Event="GotFocus" Handler="PasswordBox_GotFocus"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type PasswordBox}">
@@ -634,21 +637,13 @@
                         <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
 
                             <Grid>
-
                                 <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                                <TextBlock x:Name="PlaceHolder" Visibility="Collapsed" Text="{TemplateBinding Tag}" Opacity="0.5"/>
+                                <TextBlock x:Name="PlaceHolder" Visibility="Visible" Text="{TemplateBinding Tag}" Opacity="0.5"/>
                             </Grid>
                         </Border>
 
                         <ControlTemplate.Triggers>
 
-                            <Trigger Property="" Value="">
-                                <Setter TargetName="PlaceHolder" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-
-                            <Trigger Property="IsFocused" Value="true">
-                                <Setter TargetName="PlaceHolder" Property="Visibility" Value="Collapsed"/>
-                            </Trigger>
 
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Opacity" TargetName="border" Value="0.56"/>
