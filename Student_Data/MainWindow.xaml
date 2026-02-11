@@ -1141,7 +1141,7 @@
 
 
                         <TextBox Grid.Row="0" Grid.Column="1"  Style="{StaticResource TextBoxStyle1}" Tag="User Name" FontSize="15" Margin="0,10" Text="{Binding UserName}" />
-                            <PasswordBox Style="{DynamicResource PasswordBoxStyle1}" x:Name="PasswordBox" Grid.Row="1"  Tag="Password" FontSize="15" PasswordChar="*" />
+                            <PasswordBox Style="{DynamicResource PasswordBoxStyle1}" x:Name="PasswordBox" Grid.Row="1"  Tag="Password" FontSize="15" PasswordChar="*"/>
 
 
                         </Grid>
@@ -1152,6 +1152,11 @@
             </Border>
             </Grid>
         </Grid>
+
+        <Popup x:Name="LoginNotificationPopup" IsOpen="False" StaysOpen="False" VerticalAlignment="Center" HorizontalAlignment="Center" AllowsTransparency="True" Placement="Center" VerticalOffset="30" PlacementTarget="{Binding ElementName=Login}">
+            <TextBlock Text="{Binding LoginNotification}" HorizontalAlignment="Center" Foreground="Crimson" />
+        </Popup>
+        
 
     </Grid>
 

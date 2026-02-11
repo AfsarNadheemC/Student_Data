@@ -62,7 +62,7 @@ namespace Student_Data
 
             this.DataContext = ViewModel;
 
-
+            ViewModel.LoginNotification = "1234567890";
         }
         public DataRowCollection GetDataRowCollection(string TableName)
         {
@@ -359,8 +359,17 @@ namespace Student_Data
         private void Login_Click(object sender, RoutedEventArgs e)
         {
 
-            if (string.IsNullOrWhiteSpace(ViewModel.UserName) || string.IsNullOrWhiteSpace(ViewModel.Password))
+            if (string.IsNullOrWhiteSpace(ViewModel.UserName) )
             {
+                ViewModel.LoginNotification = "Please Enter User Name";
+                LoginNotificationPopup.IsOpen = true;
+                return;
+            }
+
+            if ( string.IsNullOrWhiteSpace(PasswordBox.Password))
+            {
+                ViewModel.LoginNotification = "Please Enter Password";
+                LoginNotificationPopup.IsOpen = true;
                 return;
             }
 
@@ -372,7 +381,7 @@ namespace Student_Data
             SqlCommand sqlCommand = new SqlCommand(sql, Connection);
 
             sqlCommand.Parameters.AddWithValue("@UserName", ViewModel.UserName);
-            sqlCommand.Parameters.AddWithValue("@Password", ViewModel.Password);
+            sqlCommand.Parameters.AddWithValue("@Password", PasswordBox.Password);
 
             SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
             DataTable dataTable = new DataTable();
@@ -380,7 +389,9 @@ namespace Student_Data
 
             if (dataTable.Rows.Count == 0)
             {
-                MessageBox.Show("Invalid UserName or Password");
+                ViewModel.LoginNotification = "Invalid User Name or Password";
+                LoginNotificationPopup.IsOpen = true;
+            Connection.Close();
                 return;
             }
             else
@@ -501,13 +512,26 @@ namespace Student_Data
             set { _UserName = value; OnPropertyChanged(nameof(UserName)); }
         }
 
-        private string _Password;
+        private string _LoginNotification;
 
-        public string Password
+        public string LoginNotification
         {
-            get { return _Password; }
-            set { _Password = value; OnPropertyChanged(nameof(Password)); }
+            get
+            {
+                return _LoginNotification;
+            }
+            set
+            {
+                _LoginNotification = value; OnPropertyChanged(nameof(LoginNotification));
+            }
         }
+        //private string _Password;
+
+        //public string Password
+        //{
+        //    get { return _Password; }
+        //    set { _Password = value; OnPropertyChanged(nameof(Password)); }
+        //}
 
         public void SetRollNumber()
         {
@@ -602,6 +626,8 @@ namespace Student_Data
             }
         }
 
+
+
         private bool _IsReadOnly;
 
         public bool IsReadOnly
@@ -627,6 +653,8 @@ namespace Student_Data
                 new Exam ("Internal3" , "20/02/2015" ,0     ,0,0,0,0 ),
                 new Exam ("Term3" , "10/04/2015",0     ,0,0,0,0  ),
             };
+
+
 
             (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
         }
