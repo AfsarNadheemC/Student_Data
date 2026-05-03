@@ -1,7 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Globalization;
+using System.Net;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,9 +18,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Data.SqlClient;
-using System.Data;
-using System.Diagnostics;
 
 
 namespace Student_Data
@@ -27,13 +30,15 @@ namespace Student_Data
         public ViewModel ViewModel;
         Storyboard SingleStudentAni;
 
-        string ConnectionString = "Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;";
+        //string ConnectionString = "Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;";
 
         SqlConnection Connection = new SqlConnection("Data Source=DESKTOP-E3FL44L\\SQLEXPRESS;Initial Catalog=School;Integrated Security=True;");
 
         public MainWindow()
         {
             InitializeComponent();
+
+            LoginPage.Visibility = Visibility.Visible;
 
             Connection.Open();
 
@@ -45,14 +50,11 @@ namespace Student_Data
             var Term2Rows = GetDataRowCollection("Term2");
             var Term3Rows = GetDataRowCollection("Term3");
 
-            Connection.Close();
 
             ObservableCollection<Student> Students = new ObservableCollection<Student>();
 
             for (int i = 0; i < StudentRows.Count; i++)
             {
-                var Student = StudentRows[i];
-
                 Students.Add(new Student(StudentRows[i].ItemArray, Internal1Rows[i].ItemArray, Term1Rows[i].ItemArray, Internal2Rows[i].ItemArray, Term2Rows[i].ItemArray, Internal3Rows[i].ItemArray, Term3Rows[i].ItemArray));
             }
 
@@ -60,9 +62,11 @@ namespace Student_Data
 
             SetRank();
 
+            Connection.Close();
+
             this.DataContext = ViewModel;
 
-            ViewModel.LoginNotification = "1234567890";
+            //ViewModel.LoginNotification = "1234567890";
         }
         public DataRowCollection GetDataRowCollection(string TableName)
         {
@@ -84,9 +88,6 @@ namespace Student_Data
 
         public void SetRank()
         {
-            Connection.Open();
-
-
             List<Student> TempStudents = ViewModel.Students.OrderByDescending(k => k.Percentage).ToList();
             ViewModel.Students = new ObservableCollection<Student>(ViewModel.Students.OrderBy(k => k.Name));
 
@@ -94,29 +95,25 @@ namespace Student_Data
 
             foreach (Student student in ViewModel.Students)
             {
-                string sql = "UPDATE STUDENTS SET Grade = @Grade";
+                string sql = "UPDATE STUDENTS SET Grade = @Grade WHERE RollNo = @RollNo";
 
                 student.Rank = TempStudents.IndexOf(student) + 1;
 
                 SqlCommand cmd = new SqlCommand(sql, Connection);
 
                 cmd.Parameters.AddWithValue("@Grade", student.Rank);
+                cmd.Parameters.AddWithValue("@RollNo", student.RollNumber);
 
                 if (!(cmd.ExecuteNonQuery() > 0))
                 {
                     MessageBox.Show("!");
                 }
-
             }
-
-            Connection.Close();
         }
 
 
         private void StudentData_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
-
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
@@ -151,9 +148,8 @@ namespace Student_Data
                         ViewModel.SelectedStudent.IsSelected = false;
                         ViewModel.SelectedStudent = SD;
                         ViewModel.SelectedStudent.IsSelected = true;
-
+                        ViewModel.IsPersonalInfo = true;
                     }
-
 
                 }
 
@@ -180,6 +176,9 @@ namespace Student_Data
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
+
+            ViewModel.IsPersonalInfo = true;
+
             SingleStudentDetailBorder.Visibility = Visibility.Visible;
 
             if (ViewModel.SelectedStudent != null)
@@ -189,7 +188,7 @@ namespace Student_Data
 
             if (ViewModel.Students.Count > 0)
             {
-                ViewModel.SelectedStudent = new Student(ViewModel.Students.Count + 1);
+                ViewModel.SelectedStudent = new Student(ViewModel.Students.Max(a => a.RollNumber) + 1);
             }
             else
             {
@@ -202,26 +201,70 @@ namespace Student_Data
 
         }
 
+
+
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-
             if (ViewModel.SelectedStudent != null)
             {
-
-                string sql = "DELETE FROM Students WHERE RollNo = @RollNo";
-
-                SqlCommand cmd = new SqlCommand(sql, Connection);
-
                 Connection.Open();
 
-                cmd.Parameters.AddWithValue("RollNo", ViewModel.SelectedStudent.RollNumber);
-
-                if (cmd.ExecuteNonQuery() > 0)
+                using (SqlTransaction transaction = Connection.BeginTransaction())
                 {
-                    ViewModel.Students.Remove(ViewModel.SelectedStudent);
+
+
+                    SqlCommand cmd = Connection.CreateCommand();
+                    cmd.Transaction = transaction;
+
+                    cmd.CommandText = "DELETE FROM Students WHERE RollNo = @RollNo";
+                    cmd.Parameters.AddWithValue("@RollNo", ViewModel.SelectedStudent.RollNumber);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+
+                    cmd.CommandText = "DELETE FROM Internal1 WHERE RollNo = @RollNo";
+                    cmd.Parameters.AddWithValue("@RollNo", ViewModel.SelectedStudent.RollNumber);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+
+                    cmd.CommandText = "DELETE FROM Internal2 WHERE RollNo = @RollNo";
+                    cmd.Parameters.AddWithValue("@RollNo", ViewModel.SelectedStudent.RollNumber);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+
+                    cmd.CommandText = "DELETE FROM Internal3 WHERE RollNo = @RollNo";
+                    cmd.Parameters.AddWithValue("@RollNo", ViewModel.SelectedStudent.RollNumber);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+
+                    cmd.CommandText = "DELETE FROM Term1 WHERE RollNo = @RollNo";
+                    cmd.Parameters.AddWithValue("@RollNo", ViewModel.SelectedStudent.RollNumber);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+
+                    cmd.CommandText = "DELETE FROM Term2 WHERE RollNo = @RollNo";
+                    cmd.Parameters.AddWithValue("@RollNo", ViewModel.SelectedStudent.RollNumber);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+
+                    cmd.CommandText = "DELETE FROM Term3 WHERE RollNo = @RollNo";
+                    cmd.Parameters.AddWithValue("@RollNo", ViewModel.SelectedStudent.RollNumber);
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+
+                    transaction.Commit();
+
                 }
 
+                ViewModel.Students.Remove(ViewModel.SelectedStudent);
 
+                SetRank();
 
                 Connection.Close();
 
@@ -234,6 +277,7 @@ namespace Student_Data
         {
             if (ViewModel.SelectedStudent != null)
             {
+                ViewModel.IsPersonalInfo = true;
 
                 SingleStudentDetailBorder.Visibility = Visibility.Visible;
 
@@ -256,7 +300,7 @@ namespace Student_Data
                 return;
             }
 
-            if ((SD.Name == null || SD.FatherName == null || SD.MotherName == null || SD.BloodGroup == null || SD.Address == null))
+            if ((string.IsNullOrWhiteSpace(SD.Name) || string.IsNullOrWhiteSpace(SD.FatherName) || string.IsNullOrWhiteSpace(SD.MotherName) || string.IsNullOrWhiteSpace(SD.BloodGroup) || string.IsNullOrWhiteSpace(SD.Address)))
             {
                 MessageBox.Show("Some Fields are Missing");
                 return;
@@ -264,39 +308,106 @@ namespace Student_Data
 
             if (ViewModel.SingleText == "Add")
             {
-                //return;
 
-                string sql = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , DateOfBirth , FullAddress) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @DateOfBirth ,@FullAddress)";
-                SqlCommand cmd = new SqlCommand(sql, Connection);
+                if (ViewModel.SelectedStudent.IsAnyExamMissing)
+                {
+                    if (MessageBox.Show("Looks like you haven't entered one or more than one exam marks\n Do You want to continue", "Learn From Mistakes", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                    {
+                        return;
+                    }
+                }
 
                 Connection.Open();
 
-                cmd.Parameters.AddWithValue("@RollNo", SD.RollNumber);
-                cmd.Parameters.AddWithValue("@FullName", SD.Name);
-                cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
-                cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
-                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
-                cmd.Parameters.AddWithValue("@DateOfBirth", SD.DateOfBirth);
-                cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
+                string sql1 = "INSERT INTO Students (RollNo , FullName , FatherName, MotherName , BloodGroup , DateOfBirth , FullAddress) Values (@RollNo , @FullName , @FatherName, @MotherName , @BloodGroup , @DateOfBirth ,@FullAddress)";
+                SqlCommand cmd1 = new SqlCommand(sql1, Connection);
 
-                if (ViewModel.Students.Count > 0)
+                cmd1.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd1.Parameters.AddWithValue("@FullName", SD.Name);
+                cmd1.Parameters.AddWithValue("@FatherName", SD.FatherName);
+                cmd1.Parameters.AddWithValue("@MotherName", SD.MotherName);
+                cmd1.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd1.Parameters.AddWithValue("@DateOfBirth", SD.DateOfBirth);
+                cmd1.Parameters.AddWithValue("@FullAddress", SD.Address);
+
+                string sql2 = "INSERT INTO Internal1 (RollNo , Lang1 , Lang2, Maths , Science , Social ) Values (@RollNo , @Lang1 , @Lang2, @Maths , @Science , @Social )";
+                SqlCommand cmd2 = new SqlCommand(sql2, Connection);
+
+                cmd2.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd2.Parameters.AddWithValue("@Lang1", SD.Exams[0].Language1);
+                cmd2.Parameters.AddWithValue("@Lang2", SD.Exams[0].Language2);
+                cmd2.Parameters.AddWithValue("@Maths", SD.Exams[0].Maths);
+                cmd2.Parameters.AddWithValue("@Science", SD.Exams[0].Science);
+                cmd2.Parameters.AddWithValue("@Social", SD.Exams[0].SocialStudies);
+
+                string sql3 = "INSERT INTO Term1 (RollNo , Lang1 , Lang2, Maths , Science , Social ) Values (@RollNo , @Lang1 , @Lang2, @Maths , @Science , @Social )";
+                SqlCommand cmd3 = new SqlCommand(sql3, Connection);
+
+                cmd3.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd3.Parameters.AddWithValue("@Lang1", SD.Exams[1].Language1);
+                cmd3.Parameters.AddWithValue("@Lang2", SD.Exams[1].Language2);
+                cmd3.Parameters.AddWithValue("@Maths", SD.Exams[1].Maths);
+                cmd3.Parameters.AddWithValue("@Science", SD.Exams[1].Science);
+                cmd3.Parameters.AddWithValue("@Social", SD.Exams[1].SocialStudies);
+
+                string sql4 = "INSERT INTO Internal2 (RollNo , Lang1 , Lang2, Maths , Science , Social ) Values (@RollNo , @Lang1 , @Lang2, @Maths , @Science , @Social )";
+                SqlCommand cmd4 = new SqlCommand(sql4, Connection);
+
+                cmd4.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd4.Parameters.AddWithValue("@Lang1", SD.Exams[2].Language1);
+                cmd4.Parameters.AddWithValue("@Lang2", SD.Exams[2].Language2);
+                cmd4.Parameters.AddWithValue("@Maths", SD.Exams[2].Maths);
+                cmd4.Parameters.AddWithValue("@Science", SD.Exams[2].Science);
+                cmd4.Parameters.AddWithValue("@Social", SD.Exams[2].SocialStudies);
+
+                string sql5 = "INSERT INTO Term2 (RollNo , Lang1 , Lang2, Maths , Science , Social ) Values (@RollNo , @Lang1 , @Lang2, @Maths , @Science , @Social )";
+                SqlCommand cmd5 = new SqlCommand(sql5, Connection);
+
+                cmd5.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd5.Parameters.AddWithValue("@Lang1", SD.Exams[3].Language1);
+                cmd5.Parameters.AddWithValue("@Lang2", SD.Exams[3].Language2);
+                cmd5.Parameters.AddWithValue("@Maths", SD.Exams[3].Maths);
+                cmd5.Parameters.AddWithValue("@Science", SD.Exams[3].Science);
+                cmd5.Parameters.AddWithValue("@Social", SD.Exams[3].SocialStudies);
+
+                string sql6 = "INSERT INTO Internal3 (RollNo , Lang1 , Lang2, Maths , Science , Social ) Values (@RollNo , @Lang1 , @Lang2, @Maths , @Science , @Social )";
+                SqlCommand cmd6 = new SqlCommand(sql6, Connection);
+
+                cmd6.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd6.Parameters.AddWithValue("@Lang1", SD.Exams[4].Language1);
+                cmd6.Parameters.AddWithValue("@Lang2", SD.Exams[4].Language2);
+                cmd6.Parameters.AddWithValue("@Maths", SD.Exams[4].Maths);
+                cmd6.Parameters.AddWithValue("@Science", SD.Exams[4].Science);
+                cmd6.Parameters.AddWithValue("@Social", SD.Exams[4].SocialStudies);
+
+                string sql7 = "INSERT INTO Term3 (RollNo , Lang1 , Lang2, Maths , Science , Social ) Values (@RollNo , @Lang1 , @Lang2, @Maths , @Science , @Social )";
+                SqlCommand cmd7 = new SqlCommand(sql7, Connection);
+
+                cmd7.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd7.Parameters.AddWithValue("@Lang1", SD.Exams[5].Language1);
+                cmd7.Parameters.AddWithValue("@Lang2", SD.Exams[5].Language2);
+                cmd7.Parameters.AddWithValue("@Maths", SD.Exams[5].Maths);
+                cmd7.Parameters.AddWithValue("@Science", SD.Exams[5].Science);
+                cmd7.Parameters.AddWithValue("@Social", SD.Exams[5].SocialStudies);
+
+                if (cmd1.ExecuteNonQuery() > 0 &&
+                    cmd2.ExecuteNonQuery() > 0 &&
+                    cmd3.ExecuteNonQuery() > 0 &&
+                    cmd4.ExecuteNonQuery() > 0 &&
+                    cmd5.ExecuteNonQuery() > 0 &&
+                    cmd6.ExecuteNonQuery() > 0 &&
+                    cmd7.ExecuteNonQuery() > 0)
                 {
-                    cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@Grade", 1);
-                }
+                    //MessageBox.Show("Added");
 
+                    SD.SetPercentage();
 
-
-                if (cmd.ExecuteNonQuery() > 0)
-                {
-                    MessageBox.Show("Added");
                     ViewModel.Students.Add(SD);
                 }
 
+                SetRank();
 
+                //ViewModel.StudentsView.Refresh();
 
                 Connection.Close();
 
@@ -309,26 +420,92 @@ namespace Student_Data
 
                 ViewModel.SelectedStudent = SD;
 
-                string sql = "UPDATE Students SET FullName = @FullName , FatherName = @FatherName, MotherName = @MotherName , BloodGroup = @BloodGroup , DateOfBirth = @DateOfBirth , FullAddress = @FullAddress, Grade = @Grade WHERE RollNo = @RollNo";
-                SqlCommand cmd = new SqlCommand(sql, Connection);
-
                 Connection.Open();
 
-                cmd.Parameters.AddWithValue("@RollNo", SD.RollNumber);
-                cmd.Parameters.AddWithValue("@FullName", SD.Name);
-                cmd.Parameters.AddWithValue("@FatherName", SD.FatherName);
-                cmd.Parameters.AddWithValue("@MotherName", SD.MotherName);
-                cmd.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
-                cmd.Parameters.AddWithValue("@DateOfBirth", SD.DateOfBirth);
-                cmd.Parameters.AddWithValue("@FullAddress", SD.Address);
-                cmd.Parameters.AddWithValue("@Grade", ViewModel.Students.Last().Rank + 1);
+                string sql1 = "UPDATE Students SET FullName = @FullName , FatherName = @FatherName, MotherName = @MotherName , BloodGroup = @BloodGroup , DateOfBirth = @DateOfBirth , FullAddress = @FullAddress WHERE RollNo = @RollNo";
+                SqlCommand cmd1 = new SqlCommand(sql1, Connection);
 
-                if (cmd.ExecuteNonQuery() > 0)
+                cmd1.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd1.Parameters.AddWithValue("@FullName", SD.Name);
+                cmd1.Parameters.AddWithValue("@FatherName", SD.FatherName);
+                cmd1.Parameters.AddWithValue("@MotherName", SD.MotherName);
+                cmd1.Parameters.AddWithValue("@BloodGroup", SD.BloodGroup);
+                cmd1.Parameters.AddWithValue("@DateOfBirth", SD.DateOfBirth);
+                cmd1.Parameters.AddWithValue("@FullAddress", SD.Address);
+
+                string sql2 = "UPDATE Internal1 SET Lang1 = @Lang1 , Lang2 = @Lang2, Maths = @Maths , Science = @Science , Social = @Social WHERE RollNo = @RollNo";
+                SqlCommand cmd2 = new SqlCommand(sql2, Connection);
+
+                cmd2.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd2.Parameters.AddWithValue("@Lang1", SD.Exams[0].Language1);
+                cmd2.Parameters.AddWithValue("@Lang2", SD.Exams[0].Language2);
+                cmd2.Parameters.AddWithValue("@Maths", SD.Exams[0].Maths);
+                cmd2.Parameters.AddWithValue("@Science", SD.Exams[0].Science);
+                cmd2.Parameters.AddWithValue("@Social", SD.Exams[0].SocialStudies);
+
+                string sql3 = "UPDATE Term1 SET Lang1 = @Lang1 , Lang2 = @Lang2, Maths = @Maths , Science = @Science , Social = @Social WHERE RollNo = @RollNo";
+                SqlCommand cmd3 = new SqlCommand(sql3, Connection);
+
+                cmd3.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd3.Parameters.AddWithValue("@Lang1", SD.Exams[1].Language1);
+                cmd3.Parameters.AddWithValue("@Lang2", SD.Exams[1].Language2);
+                cmd3.Parameters.AddWithValue("@Maths", SD.Exams[1].Maths);
+                cmd3.Parameters.AddWithValue("@Science", SD.Exams[1].Science);
+                cmd3.Parameters.AddWithValue("@Social", SD.Exams[1].SocialStudies);
+
+                string sql4 = "UPDATE Internal2 SET Lang1 = @Lang1 , Lang2 = @Lang2, Maths = @Maths , Science = @Science , Social = @Social WHERE RollNo = @RollNo";
+                SqlCommand cmd4 = new SqlCommand(sql4, Connection);
+
+                cmd4.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd4.Parameters.AddWithValue("@Lang1", SD.Exams[2].Language1);
+                cmd4.Parameters.AddWithValue("@Lang2", SD.Exams[2].Language2);
+                cmd4.Parameters.AddWithValue("@Maths", SD.Exams[2].Maths);
+                cmd4.Parameters.AddWithValue("@Science", SD.Exams[2].Science);
+                cmd4.Parameters.AddWithValue("@Social", SD.Exams[2].SocialStudies);
+
+                string sql5 = "UPDATE Term2 SET Lang1 = @Lang1 , Lang2 = @Lang2, Maths = @Maths , Science = @Science , Social = @Social WHERE RollNo = @RollNo";
+                SqlCommand cmd5 = new SqlCommand(sql5, Connection);
+
+                cmd5.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd5.Parameters.AddWithValue("@Lang1", SD.Exams[3].Language1);
+                cmd5.Parameters.AddWithValue("@Lang2", SD.Exams[3].Language2);
+                cmd5.Parameters.AddWithValue("@Maths", SD.Exams[3].Maths);
+                cmd5.Parameters.AddWithValue("@Science", SD.Exams[3].Science);
+                cmd5.Parameters.AddWithValue("@Social", SD.Exams[3].SocialStudies);
+
+                string sql6 = "UPDATE Internal3 SET Lang1 = @Lang1 , Lang2 = @Lang2, Maths = @Maths , Science = @Science , Social = @Social WHERE RollNo = @RollNo";
+                SqlCommand cmd6 = new SqlCommand(sql6, Connection);
+
+                cmd6.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd6.Parameters.AddWithValue("@Lang1", SD.Exams[4].Language1);
+                cmd6.Parameters.AddWithValue("@Lang2", SD.Exams[4].Language2);
+                cmd6.Parameters.AddWithValue("@Maths", SD.Exams[4].Maths);
+                cmd6.Parameters.AddWithValue("@Science", SD.Exams[4].Science);
+                cmd6.Parameters.AddWithValue("@Social", SD.Exams[4].SocialStudies);
+
+                string sql7 = "UPDATE Term3 SET Lang1 = @Lang1 , Lang2 = @Lang2, Maths = @Maths , Science = @Science , Social = @Social WHERE RollNo = @RollNo";
+                SqlCommand cmd7 = new SqlCommand(sql7, Connection);
+
+                cmd7.Parameters.AddWithValue("@RollNo", SD.RollNumber);
+                cmd7.Parameters.AddWithValue("@Lang1", SD.Exams[5].Language1);
+                cmd7.Parameters.AddWithValue("@Lang2", SD.Exams[5].Language2);
+                cmd7.Parameters.AddWithValue("@Maths", SD.Exams[5].Maths);
+                cmd7.Parameters.AddWithValue("@Science", SD.Exams[5].Science);
+                cmd7.Parameters.AddWithValue("@Social", SD.Exams[5].SocialStudies);
+
+                if (cmd1.ExecuteNonQuery() > 0 &&
+                    cmd2.ExecuteNonQuery() > 0 &&
+                    cmd3.ExecuteNonQuery() > 0 &&
+                    cmd4.ExecuteNonQuery() > 0 &&
+                    cmd5.ExecuteNonQuery() > 0 &&
+                    cmd6.ExecuteNonQuery() > 0 &&
+                    cmd7.ExecuteNonQuery() > 0)
                 {
-                    MessageBox.Show("Updated");
-                    //ViewModel.SelectedStudent = new Student((int.Parse(ViewModel.Students.Last().RollNumber) + 1).ToString());
+                    SD.SetPercentage();
+                    //MessageBox.Show("Updated");
                 }
 
+                SetRank();
 
 
                 Connection.Close();
@@ -336,37 +513,18 @@ namespace Student_Data
 
         }
 
-        private void AddExams()
-        {
-
-        }
-
-
-        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string Search = SearchTextBox.Text;
-
-            if (string.IsNullOrWhiteSpace(Search))
-            {
-                StudentsItemsControl.ItemsSource = ViewModel.Students;
-            }
-            else
-            {
-                StudentsItemsControl.ItemsSource = ViewModel.Students.Where(a => a.Name.IndexOf(Search, StringComparison.OrdinalIgnoreCase) > -1);
-            }
-        }
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
 
-            if (string.IsNullOrWhiteSpace(ViewModel.UserName) )
+            if (string.IsNullOrWhiteSpace(ViewModel.UserName))
             {
                 ViewModel.LoginNotification = "Please Enter User Name";
                 LoginNotificationPopup.IsOpen = true;
                 return;
             }
 
-            if ( string.IsNullOrWhiteSpace(PasswordBox.Password))
+            if (string.IsNullOrWhiteSpace(PasswordBox.Password))
             {
                 ViewModel.LoginNotification = "Please Enter Password";
                 LoginNotificationPopup.IsOpen = true;
@@ -391,7 +549,7 @@ namespace Student_Data
             {
                 ViewModel.LoginNotification = "Invalid User Name or Password";
                 LoginNotificationPopup.IsOpen = true;
-            Connection.Close();
+                Connection.Close();
                 return;
             }
             else
@@ -414,7 +572,7 @@ namespace Student_Data
         {
             PasswordBox passwordBox = sender as PasswordBox;
 
-            if ( passwordBox.Password.Length == 0)
+            if (passwordBox.Password.Length == 0)
             {
                 passwordBox.Tag = "Password";
             }
@@ -430,521 +588,28 @@ namespace Student_Data
             PasswordBox passwordBox = sender as PasswordBox;
             passwordBox.Tag = "";
         }
-    }
 
-    public class ViewModel(ObservableCollection<Student> students) : INotifyPropertyChanged
-    {
-
-        public string SchoolName { get; set; } = "Springfield High School";
-        public string TeacherName { get; set; } = "Galileo Galilei";
-        public string Class { get; set; } = "5B";
-        public float Percentage { get; set; }
-        public ObservableCollection<Student> Students { get; set; } = students;
-
-        private Student? _SelectedStudent;
-
-        public Student SelectedStudent
+        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            get { return _SelectedStudent; }
-            set { _SelectedStudent = value; OnPropertyChanged(nameof(SelectedStudent)); }
+            Image img = sender as Image;
+
+            var path = img.Source;
         }
 
-        private Thickness _FromMargin;
-
-        public Thickness FromMargin
+        private void BloodGroupItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            get { return _FromMargin; }
-            set { _FromMargin = value; OnPropertyChanged(nameof(FromMargin)); }
+            ViewModel.SelectedStudent.BloodGroup = (sender as Grid).DataContext as string;
+            BloodGroupPopup.IsOpen = false;
         }
 
-        private bool myVar;
-
-        public bool MyProperty
+        private void BloodGroupSelectBorder_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            get { return myVar; }
-            set { myVar = value; }
+            BloodGroupPopup.IsOpen = true;
         }
 
-        private bool _IsExaminations;
-
-        public bool IsExaminations
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            get
-            {
-                return _IsExaminations;
-            }
-            set
-            {
-                _IsExaminations = value;
-                OnPropertyChanged(nameof(IsExaminations));
-            }
-        }
-
-        private bool _IsPersonalInfo = true;
-
-        public bool IsPersonalInfo
-        {
-            get
-            {
-                return _IsPersonalInfo;
-            }
-            set
-            {
-                _IsPersonalInfo = value;
-                OnPropertyChanged(nameof(IsPersonalInfo));
-            }
-        }
-
-        private string _SingleText;
-
-        public string SingleText
-        {
-            get { return _SingleText; }
-            set { _SingleText = value; OnPropertyChanged(nameof(SingleText)); }
-        }
-
-
-        private string _UserName;
-
-        public string UserName
-        {
-            get { return _UserName; }
-            set { _UserName = value; OnPropertyChanged(nameof(UserName)); }
-        }
-
-        private string _LoginNotification;
-
-        public string LoginNotification
-        {
-            get
-            {
-                return _LoginNotification;
-            }
-            set
-            {
-                _LoginNotification = value; OnPropertyChanged(nameof(LoginNotification));
-            }
-        }
-        //private string _Password;
-
-        //public string Password
-        //{
-        //    get { return _Password; }
-        //    set { _Password = value; OnPropertyChanged(nameof(Password)); }
-        //}
-
-        public void SetRollNumber()
-        {
-            List<Student> TempStudents = Students.OrderBy(k => k.Name).ToList();
-
-            Students.Clear();
-
-            for (int i = 0; i < TempStudents.Count; i++)
-            {
-
-                Students.Add(TempStudents[i]);
-            }
-
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-    }
-
-    public class Student : INotifyPropertyChanged
-    {
-        public string Name { get; set; }
-        private int _RollNumber;
-
-        public int RollNumber
-        {
-            get
-            {
-                return _RollNumber;
-            }
-            set
-            {
-                _RollNumber = value;
-                OnPropertyChanged(nameof(RollNumber));
-            }
-        }
-
-
-        public string Address { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public ObservableCollection<Exam> Exams { get; set; }
-        public string BloodGroup { get; set; }
-        public float Percentage { get; set; }
-
-        public SolidColorBrush ProgressColor
-        {
-            get
-            {
-
-                if (Percentage > 75)
-                {
-                    return new SolidColorBrush(Colors.Green);
-                }
-                else if (Percentage > 50)
-                {
-                    return new SolidColorBrush(Colors.Orange);
-                }
-                return new SolidColorBrush(Colors.Red);
-            }
-        }
-
-
-        public Color LabelColorDark { get; set; }
-        public Color LabelColorDim { get; set; }
-        public string FatherName { get; set; }
-        public string MotherName { get; set; }
-        public int Rank { get; set; }
-        public char Initial
-        {
-            get
-            {
-                return Name[0];
-            }
-        }
-
-        private bool _IsSelected;
-
-        public bool IsSelected
-        {
-            get
-            {
-                return _IsSelected;
-            }
-            set
-            {
-                _IsSelected = value; OnPropertyChanged(nameof(IsSelected));
-            }
-        }
-
-
-
-        private bool _IsReadOnly;
-
-        public bool IsReadOnly
-        {
-            get { return _IsReadOnly; }
-            set { _IsReadOnly = value; OnPropertyChanged(nameof(IsReadOnly)); }
-        }
-
-        public Student(int RollNo)
-        {
-            RollNumber = RollNo;
-            DateOfBirth = new DateTime(2002, 1, 1);
-            IsReadOnly = false;
-
-            Exams = new ObservableCollection<Exam>
-            {
-                new Exam ("Internal1" , "10/07/2015" ,0     ,0,0,0,0 ),
-                new Exam ("Term1" , "29/08/2015" ,0     ,0,0,0,0 ),
-
-                new Exam ("Internal2" , "01/11/2015" ,0     ,0,0,0,0  ),
-                new Exam ("Term2" , "15/12/2015" ,0     ,0,0,0,0  ),
-
-                new Exam ("Internal3" , "20/02/2015" ,0     ,0,0,0,0 ),
-                new Exam ("Term3" , "10/04/2015",0     ,0,0,0,0  ),
-            };
-
-
-
-            (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
-        }
-
-        public Student(object[] Objects)
-        {
-            if (Objects[0] is int RollNo)
-            {
-                RollNumber = RollNo;
-            }
-            Name = Objects[1] as string;
-            FatherName = Objects[2] as string;
-            MotherName = Objects[3] as string;
-            BloodGroup = Objects[4] as string;
-
-            if (Objects[5] is DateTime DOB)
-            {
-                DateOfBirth = DOB;
-            }
-
-            Address = Objects[6] as string;
-
-
-            IsReadOnly = true;
-            (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
-        }
-
-        public Student(object[] StudentObjects, object[] Internal1Objects, object[] Term1Objects, object[] Internal2Objects, object[] Term2Objects, object[] Internal3Objects, object[] Term3Objects)
-        {
-            if (StudentObjects[0] is int RollNo)
-            {
-                RollNumber = RollNo;
-            }
-            Name = StudentObjects[1] as string;
-            FatherName = StudentObjects[2] as string;
-            MotherName = StudentObjects[3] as string;
-            BloodGroup = StudentObjects[4] as string;
-
-            if (StudentObjects[5] is DateTime DOB)
-            {
-                DateOfBirth = DOB;
-            }
-
-            Address = StudentObjects[6] as string;
-
-            Exams =
-
-            [
-
-                new Exam ("Internal1" , "10/07/2015" ,(int) Internal1Objects[0] ,(int)  Internal1Objects[1] , (int) Internal1Objects[2] , (int) Internal1Objects[3] ,  (int)Internal1Objects[4] ),
-                new Exam ("Term1" , "29/08/2015" ,(int) Term1Objects[0] ,(int)  Term1Objects[1] , (int) Term1Objects[2] , (int) Term1Objects[3] ,  (int)Term1Objects[4] ),
-
-                new Exam ("Internal2" , "01/11/2015" ,(int) Internal2Objects[0] ,(int)  Internal2Objects[1] , (int) Internal2Objects[2] , (int) Internal2Objects[3] ,  (int)Internal2Objects[4] ),
-                new Exam ("Term2" , "15/12/2015" ,(int) Term2Objects[0] ,(int)  Term2Objects[1] , (int) Term2Objects[2] , (int) Term2Objects[3] ,  (int)Term2Objects[4] ),
-
-                new Exam ("Internal3" , "20/02/2015" ,(int) Internal3Objects[0] ,(int)  Internal3Objects[1] , (int) Internal3Objects[2] , (int) Internal3Objects[3] ,  (int)Internal3Objects[4] ),
-                new Exam ("Term3" , "10/04/2015" ,(int) Term3Objects[0] ,(int)  Term3Objects[1] , (int) Term3Objects[2] , (int) Term3Objects[3] ,  (int)Term3Objects[4] ),
-
-            ];
-
-
-
-            float TotalPercentage = 0f;
-
-            foreach (Exam exam in Exams)
-            {
-                TotalPercentage += exam.GetPercentage();
-            }
-
-            Percentage = TotalPercentage / Exams.Count;
-
-
-            IsReadOnly = true;
-            (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
-        }
-
-        public Student(string name, string address, DateTime dateOfBirth, ObservableCollection<Exam> exams, string bloodGroup, string fatherName, string motherName)
-        {
-            Name = name;    //
-            Address = address;  //
-            DateOfBirth = dateOfBirth;
-            Exams = exams;
-            BloodGroup = bloodGroup;    //
-
-            float TotalPercentage = 0f;
-
-            foreach (Exam exam in Exams)
-            {
-                TotalPercentage += exam.GetPercentage();
-            }
-
-            Percentage = TotalPercentage / Exams.Count;
-
-
-            (LabelColorDark, LabelColorDim) = CommonColors.GetRandomColor();
-            FatherName = fatherName;
-            MotherName = motherName;
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string PropertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
-        }
-    }
-
-
-
-    public class Exam : INotifyPropertyChanged
-    {
-
-        private string _Name;
-
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; OnPropertyChanged(nameof(Name)); }
-        }
-
-        private string _Date;
-
-        public string Date
-        {
-            get { return _Date; }
-            set { _Date = value; OnPropertyChanged(nameof(Date)); }
-        }
-
-        private int _Language1;
-
-        public int Language1
-        {
-            get { return _Language1; }
-            set
-            {
-                if (value >= 0 && value <= 100) { _Language1 = value; }
-                OnPropertyChanged(nameof(Language1)); OnPropertyChanged(nameof(TotalScored)); OnPropertyChanged(nameof(Percentage));
-            }
-        }
-
-        private int _Language2;
-
-        public int Language2
-        {
-            get { return _Language2; }
-            set
-            {
-                if (value >= 0 && value <= 100) { _Language2 = value; }
-                OnPropertyChanged(nameof(Language2)); OnPropertyChanged(nameof(TotalScored)); OnPropertyChanged(nameof(Percentage));
-            }
-        }
-
-        private int _Maths;
-
-        public int Maths
-        {
-            get { return _Maths; }
-            set
-            {
-                if (value >= 0 && value <= 100) { _Maths = value; }
-                OnPropertyChanged(nameof(Maths)); OnPropertyChanged(nameof(TotalScored)); OnPropertyChanged(nameof(Percentage));
-            }
-        }
-
-        private int _Science;
-
-        public int Science
-        {
-            get { return _Science; }
-            set
-            {
-                if (value >= 0 && value <= 100) { _Science = value; }
-                OnPropertyChanged(nameof(Science)); OnPropertyChanged(nameof(TotalScored)); OnPropertyChanged(nameof(Percentage));
-            }
-        }
-
-        private int _SocialStudies;
-
-        public int SocialStudies
-        {
-            get { return _SocialStudies; }
-            set
-            {
-                if (value >= 0 && value <= 100) { _SocialStudies = value; }
-                OnPropertyChanged(nameof(SocialStudies)); OnPropertyChanged(nameof(TotalScored)); OnPropertyChanged(nameof(Percentage));
-            }
-        }
-
-
-        public int TotalScored
-        {
-            get
-            {
-                return (int)(Language1 + Language2 + Maths + Science + SocialStudies);
-
-            }
-        }
-
-        public int Percentage
-        {
-            get
-            {
-                return (TotalScored * 100 / TotalMarks);
-            }
-        }
-
-        public int TotalMarks { get; } = 500;
-
-
-        public Exam(string name, string date, int language1, int language2, int maths, int science, int socialStudies)
-        {
-            Name = name;
-            Date = date;
-            Language1 = language1;
-            Language2 = language2;
-            Maths = maths;
-            Science = science;
-            SocialStudies = socialStudies;
-        }
-
-        public float GetPercentage()
-        {
-            return (TotalScored * 100 / TotalMarks);
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string PropertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
-        }
-
-
-    }
-
-    public class CommonColors()
-    {
-
-        public static Color[] BackColors = new Color[]
-{
-            (Color)ColorConverter.ConvertFromString("#e9e0fd"  ), // Violet
-            (Color)ColorConverter.ConvertFromString("#ffd6e7") , // Red 
-            (Color)ColorConverter.ConvertFromString("#ccffd0") , // Green
-            (Color)ColorConverter.ConvertFromString("#c0f5ef") , // Blue Green
-            (Color)ColorConverter.ConvertFromString("#c2ecfc") , // Blue
-            (Color)ColorConverter.ConvertFromString("#ffe1d6") , // Orange
-            (Color)ColorConverter.ConvertFromString("#ffd6da") , // Maroon
-
-};
-
-
-        public static Color[] ForeColors = new Color[]
-        {
-            (Color)ColorConverter.ConvertFromString("#6950d4"  ), // Violet
-            (Color)ColorConverter.ConvertFromString("#e2026b") , // Red
-      (Color)ColorConverter.ConvertFromString("#058c50") , // Green
-         (Color)ColorConverter.ConvertFromString("#046d68") , // Blue Green
-    (Color)ColorConverter.ConvertFromString("#0282b8") , // Blue
-        (Color)ColorConverter.ConvertFromString("#cd4b26") , // Orange
-          (Color)ColorConverter.ConvertFromString("#96062f") , // Maroon
-
-        };
-
-        public static (Color, Color) GetRandomColor()
-        {
-            Random RD = new Random();
-
-            int Index = RD.Next(6);
-
-            return (ForeColors[Index], BackColors[Index]);
-
-        }
-    }
-
-    public enum Page
-    {
-        Personal_Details,
-        Exams
-    }
-
-    public class InverseBoolToVis : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return ((bool)value) ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
+            ExamsScrollViewer.ScrollToTop();
         }
     }
 

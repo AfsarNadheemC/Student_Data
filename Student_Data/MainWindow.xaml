@@ -9,6 +9,7 @@
 
 
     <Window.Resources>
+
         <Storyboard x:Key="SingleStudentAni" Completed="SingleStudentAni_Completed" >
             <ThicknessAnimation
                 From="{Binding FromMargin}"
@@ -120,7 +121,7 @@
 
         <BooleanToVisibilityConverter x:Key="BtoV"/>
 
-        <local:InverseBoolToVis x:Key="IBtoV"/>
+        <!--<local:InverseBoolToVis x:Key="IBtoV"/>-->
 
         <Style x:Key="FocusVisual1">
             <Setter Property="Control.Template">
@@ -198,16 +199,16 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TextBox}">
-                        
+
                         <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
 
                             <Grid>
-                                
-                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                                <TextBlock x:Name="PlaceHolder" Visibility="Collapsed" Text="{TemplateBinding Tag}" Opacity="0.5"/> 
+
+                                <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                <TextBlock x:Name="PlaceHolder" Visibility="Collapsed" Text="{TemplateBinding Tag}" Opacity="0.5"/>
                             </Grid>
                         </Border>
-                        
+
                         <ControlTemplate.Triggers>
 
                             <Trigger Property="Text" Value="">
@@ -217,7 +218,7 @@
                             <Trigger Property="IsFocused" Value="true">
                                 <Setter TargetName="PlaceHolder" Property="Visibility" Value="Collapsed"/>
                             </Trigger>
-                            
+
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Opacity" TargetName="border" Value="0.56"/>
                             </Trigger>
@@ -228,7 +229,7 @@
                                 <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
-                        
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -568,7 +569,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TextBox}">
-                        
+
                         <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="True">
                             <Grid>
                                 <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
@@ -596,7 +597,7 @@
                             </Trigger>
 
                         </ControlTemplate.Triggers>
-                        
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -610,11 +611,11 @@
                 </MultiTrigger>
             </Style.Triggers>
         </Style>
-        
+
         <SolidColorBrush x:Key="TextBox.Static.Border2" Color="#FFABAdB3"/>
         <SolidColorBrush x:Key="TextBox.MouseOver.Border2" Color="#FF7EB4EA"/>
         <SolidColorBrush x:Key="TextBox.Focus.Border2" Color="#FF569DE5"/>
-        
+
         <Style x:Key="PasswordBoxStyle1" TargetType="{x:Type PasswordBox}">
             <Setter Property="PasswordChar" Value="*"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -677,13 +678,12 @@
 
 
         <Grid.Background >
-            <ImageBrush ImageSource="H:\Software\C#\UI\Student_Data\Student_Data\assets\Back.jpg" />
+            <ImageBrush ImageSource="/assets/Back.jpg" />
         </Grid.Background>
-        <Grid Margin="5,5" >
-
+        
+        <Grid Margin="5,5">
 
             <Grid.RowDefinitions>
-
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="45"/>
                 <RowDefinition Height="*"/>
@@ -694,21 +694,19 @@
 
             <Rectangle Fill="#dddddd" Height="2" Margin="-5,0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" />
 
-            <TextBox Style="{DynamicResource SearchText}" Tag="Search by Name" Grid.Row="1" HorizontalAlignment="Left" Width="200" Margin="5,0,0,0" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" />
-
-            <!--<TextBlock Text="{Binding TeacherName}" FontFamily="Cambria"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1"/>-->
+            <TextBox Style="{DynamicResource SearchText}" Tag="Search by Name" Grid.Row="1" HorizontalAlignment="Left" Width="200" Margin="5,0,0,0" x:Name="SearchTextBox" Text="{Binding Search , UpdateSourceTrigger=PropertyChanged}" />
 
             <Grid Background="Transparent" HorizontalAlignment="Right" Grid.Row="1" >
 
                 <TextBlock Text="{Binding Class}" FontSize="24" FontFamily="Cambria"  FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Margin="10,0"/>
                 <Rectangle Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="10"/>
                 <Rectangle Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="{Binding Percentage}" Height="5" Fill="ForestGreen" RadiusX="2.5" RadiusY="2.5" Margin="10"/>
+                
             </Grid>
 
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" x:Name="StudentsScroll">
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" x:Name="StudentsScroll">
 
-
-                <ItemsControl ItemsSource="{Binding Students}" x:Name="StudentsItemsControl" Margin="0,0,0,60">
+                <ItemsControl ItemsSource="{Binding StudentsView}" x:Name="StudentsItemsControl" Margin="0,0,0,60">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
 
@@ -796,15 +794,15 @@
                                             <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" Margin="5,0" Grid.Row="0" Padding="0" VerticalAlignment="Center"/>
 
                                             <Rectangle Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0" />
-                                            <Rectangle Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" />
+                                            <Rectangle Width="{Binding Percentage}" Opacity="1" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0" />
 
                                         </Grid>
 
-                                        <Image Grid.Column="2" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\trophy.png" Height="30" HorizontalAlignment="Right"/>
+                                        <Image Grid.Column="2"       Source="/assets/icon.ico"   MouseDown="Image_MouseDown"    Height="30" HorizontalAlignment="Right"/>
 
                                         <TextBlock Text="{Binding Rank}" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,15,0" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16"/>
 
-                                        <Image Grid.Column="4" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\chevron.png" Height="30" HorizontalAlignment="Right" Opacity="0.5"/>
+                                        <Image Grid.Column="4" Source="\assets\chevron.png" Height="30" HorizontalAlignment="Right" Opacity="0.5"/>
                                     </Grid>
 
                                 </Border>
@@ -870,17 +868,17 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="{Binding Name}" VerticalAlignment="Top" FontSize="16" FontWeight="SemiBold" Margin="10,5,0,0" Grid.Column="0"  >
+                            <TextBlock Text="{Binding Name}" Visibility="{Binding IsReadOnly , Converter={StaticResource BtoV}}" VerticalAlignment="Top" FontSize="16" FontWeight="SemiBold" Margin="10,5,0,0" Grid.Column="0"  >
                                 <TextBlock.Foreground>
                                     <SolidColorBrush Color="{Binding LabelColorDark}"/>
                                 </TextBlock.Foreground>
                             </TextBlock>
 
-                            <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" />
-                            <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" />
+                            <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="100" Height="5" Fill="LightGray" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" Visibility="{Binding IsReadOnly , Converter={StaticResource BtoV}}" />
+                            <Rectangle Grid.Row="0" VerticalAlignment="Bottom"  HorizontalAlignment="Left" Width="{Binding Percentage}" Height="5" Fill="{Binding ProgressColor}" RadiusX="2.5" RadiusY="2.5" Margin="10,0,0,10" Grid.Column="0" Visibility="{Binding IsReadOnly , Converter={StaticResource BtoV}}" />
 
-                            <Image Grid.Column="1" Source="H:\Software\C#\UI\Student_Data\Student_Data\assets\trophy.png" Height="30" HorizontalAlignment="Right"/>
-                            <TextBlock Text="{Binding Rank}" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Margin="5,0,0,0" Grid.Column="2" />
+                            <Image Grid.Column="1" Source="/assets/icon.ico" Height="30" HorizontalAlignment="Right"  Visibility="{Binding IsReadOnly , Converter={StaticResource BtoV}}"/>
+                            <TextBlock Text="{Binding Rank}" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Margin="5,0,0,0" Grid.Column="2"  Visibility="{Binding IsReadOnly , Converter={StaticResource BtoV}}"/>
 
                             <Border Margin="0,5,5,0" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" Padding="8,4" Background="#DD5555" CornerRadius="10" MouseDown="Close_MouseDown" >
 
@@ -906,7 +904,7 @@
                             <TextBlock Text="Personal Info" Margin="12,0" FontSize="16" FontWeight="SemiBold" />
 
                             <StackPanel Margin="10,5" Grid.Column="0" Grid.Row="1">
-                                <TextBlock  Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}"  Text="Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
+                                <TextBlock  Visibility="{Binding IsReadOnlyNeg , Converter={StaticResource BtoV}}"  Text="Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBlock Height="19" Text="Roll No : " FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBlock Height="19" Text="Father Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBlock Height="19" Text="Mother Name : " FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
@@ -917,19 +915,25 @@
 
 
                             <StackPanel  Margin="10,5" Grid.Column="1"  Grid.Row="1">
-                                <TextBox Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" x:Name="NameTxt" />
-                                <TextBox Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
+                                <TextBox Visibility="{Binding IsReadOnlyNeg , Converter={StaticResource BtoV}}" Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" x:Name="NameTxt" />
+                                <TextBox Style="{DynamicResource TextBoxStyle1}" IsReadOnly="True" Text="{Binding RollNumber}" FontSize="14" FontWeight="SemiBold" Opacity="0.7" Margin="4" />
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding FatherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding MotherName}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
-                                <TextBox  Style="{DynamicResource TextBoxStyle1}" IsReadOnly="{Binding IsReadOnly}" Text="{Binding BloodGroup}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
+
+                                <Border IsHitTestVisible="{Binding IsReadOnlyNeg }" Height="19" Margin="4" BorderBrush="LightGray" BorderThickness="0,0,0,1"  Background="Transparent" x:Name="BloodGroupSelectBorder" MouseUp="BloodGroupSelectBorder_MouseDown" >
+                                    <TextBlock Text="{Binding BloodGroup}"  FontSize="14" FontWeight="SemiBold" Opacity=".7" />
+                                </Border>
+
                                 <TextBox  Style="{DynamicResource TextBoxStyle1}"  Visibility="{Binding IsReadOnly , Converter={StaticResource BtoV}}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding DateOfBirth , StringFormat='dd-MM-yyyy'}" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
 
-                                <DatePicker Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" Style="{StaticResource DatePickerStyle1}" SelectedDate="{Binding DateOfBirth, StringFormat='dd-MM-yyyy'}" DisplayDateStart="01-01-2002" FontSize="14" FontWeight="SemiBold" Opacity="0.7" />
+                                <DatePicker Visibility="{Binding IsReadOnlyNeg , Converter={StaticResource BtoV}}" Style="{StaticResource DatePickerStyle1}" DisplayDateStart="01/01/01"  SelectedDate="{Binding DateOfBirth, StringFormat='dd-MM-yyyy'}"  FontSize="14" FontWeight="SemiBold" Opacity="0.7" />
 
+                                
+                                
                                 <TextBox Style="{DynamicResource TextBoxStyle1}"  IsReadOnly="{Binding IsReadOnly}" Text="{Binding Address}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold" Opacity="0.7"  Margin="4" />
                             </StackPanel>
 
-                            <Button Visibility="{Binding IsReadOnly , Converter={StaticResource IBtoV}}" VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding DataContext.SingleText , RelativeSource={RelativeSource AncestorType=Window}}" Height="40" Width="100" Margin="10" x:Name="SingleAdd" Click="SingleAdd_Click" >
+                            <Button Visibility="{Binding IsReadOnlyNeg , Converter={StaticResource BtoV}}" VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding DataContext.SingleText , RelativeSource={RelativeSource AncestorType=Window}}" Height="40" Width="100" Margin="10" x:Name="SingleAdd" Click="SingleAdd_Click" >
                                 <Button.Style>
 
                                     <Style TargetType="{x:Type Button}">
@@ -987,7 +991,7 @@
                             </Button>
                         </Grid>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
+                        <ScrollViewer x:Name="ExamsScrollViewer" VerticalScrollBarVisibility="Visible" Grid.Row="1" Margin="0,0,0,10" Visibility="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay , Converter={StaticResource BtoV}}">
 
                             <StackPanel >
 
@@ -1100,7 +1104,7 @@
 
 
                                 <RadioButton Content="Personal Info" Style="{StaticResource NavRadio}" Margin="5,0" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" IsChecked="{Binding DataContext.IsPersonalInfo, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
-                                <RadioButton Content="Examinations" Style="{StaticResource NavRadio}" Margin="5,0"  VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Left" IsChecked="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
+                                <RadioButton Content="Examinations" Style="{StaticResource NavRadio}" Margin="5,0"  VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Left" IsChecked="{Binding DataContext.IsExaminations, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" Checked="RadioButton_Checked" />
                             </Grid>
                         </Border>
 
@@ -1113,7 +1117,7 @@
 
         </Grid>
 
-        <Grid Background="#FFFFFF" x:Name="LoginPage" Visibility="Visible">
+        <Grid Background="#FFFFFF" x:Name="LoginPage" Visibility="Collapsed">
 
             <Grid>
 
@@ -1127,36 +1131,75 @@
                 <Border  Background="Beige" Height="200" Width="250" CornerRadius="20" >
 
 
-                <StackPanel VerticalAlignment="Center" >
-                    <TextBlock Text="User Login" HorizontalAlignment="Center"  FontSize="20" FontWeight="SemiBold"/>
+                    <StackPanel VerticalAlignment="Center" >
+                        <TextBlock Text="User Login" HorizontalAlignment="Center"  FontSize="20" FontWeight="SemiBold"/>
 
-                    <Grid HorizontalAlignment="Center" Width="150">
-
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
+                        <Grid HorizontalAlignment="Center" Width="150">
 
 
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-                        <TextBox Grid.Row="0" Grid.Column="1"  Style="{StaticResource TextBoxStyle1}" Tag="User Name" FontSize="15" Margin="0,10" Text="{Binding UserName}" />
+
+
+                            <TextBox Grid.Row="0" Grid.Column="1"  Style="{StaticResource TextBoxStyle1}" Tag="User Name" FontSize="15" Margin="0,10" Text="{Binding UserName}" />
                             <PasswordBox Style="{DynamicResource PasswordBoxStyle1}" x:Name="PasswordBox" Grid.Row="1"  Tag="Password" FontSize="15" PasswordChar="*"/>
 
 
                         </Grid>
 
-                    <Button Height="30" Width="100" Margin="10" Style="{StaticResource EditButtonStyle}"  Content="Login" x:Name="Login" Click="Login_Click"/>
+                        <Button Height="30" Width="100" Margin="10" Style="{StaticResource EditButtonStyle}"  Content="Login" x:Name="Login" Click="Login_Click"/>
 
-                </StackPanel>
-            </Border>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Grid>
 
         <Popup x:Name="LoginNotificationPopup" IsOpen="False" StaysOpen="False" VerticalAlignment="Center" HorizontalAlignment="Center" AllowsTransparency="True" Placement="Center" VerticalOffset="30" PlacementTarget="{Binding ElementName=Login}">
             <TextBlock Text="{Binding LoginNotification}" HorizontalAlignment="Center" Foreground="Crimson" />
         </Popup>
-        
+
+
+        <Popup x:Name="BloodGroupPopup" HorizontalOffset="-5" Placement="Bottom" PlacementTarget="{Binding ElementName=BloodGroupSelectBorder}" StaysOpen="False" AllowsTransparency="True">
+            <Border BorderBrush="LightGray" BorderThickness="1" Background="WhiteSmoke" Padding="5" Width="120" CornerRadius="5">
+                <ItemsControl ItemsSource="{Binding BloodGroupList}">
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+
+                            <Grid Width="50" MouseDown="BloodGroupItem_MouseDown"  >
+                                <Grid.Style>
+
+                                
+
+                                <Style TargetType="Grid">
+
+                                        <Setter Property="TextBlock.Foreground" Value="Black" />
+
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="TextBlock.Foreground" Value="Navy"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        
+                                    </Style>
+                                </Grid.Style>
+                                <TextBlock  HorizontalAlignment="Center" Text="{Binding}" FontSize="14" FontWeight="SemiBold" Margin="2" Name="BloodGroupItem" Background="Transparent" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                </ItemsControl>
+            </Border>
+        </Popup>
 
     </Grid>
 
